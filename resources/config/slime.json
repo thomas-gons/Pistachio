@@ -1,0 +1,18 @@
+{
+  "TransformComponent": {
+    "x": 960,
+    "y": 540
+  },
+
+  "GraphicsComponent": {
+    "tag": "slime",
+    "texture": "slime.png",
+    "AnimationComponent": {
+      "frameDuration":  83.33,
+      "rowsCount": 3,
+      "frameCountPerRow": [
+        4, 18, 10
+      ]
+    }
+  }
+}
