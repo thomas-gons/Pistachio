@@ -1,13 +1,15 @@
 # CMakeLists.txt (src/vendor)
 
+
 add_library(vendor INTERFACE)
 target_link_libraries(vendor INTERFACE imgui::imgui stb_image::stb_image)
 
 
-# IM_GUI
+### IM_GUI ###
 
 set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
 set(IMGUI_BACKEND_DIR ${IMGUI_DIR}/backends)
+set(IMGUI_FREETYPE_DIR ${IMGUI_DIR}/misc/freetype)
 
 #[[
     ImGui provides the following graphics APIs out of the box:
@@ -44,21 +46,24 @@ set(IMGUI_SOURCES
 
         ${IMGUI_BACKEND_DIR}/imgui_impl_${GRAPHICS_API}.cpp
         ${IMGUI_BACKEND_DIR}/imgui_impl_sdl2.cpp
+
+        ${IMGUI_FREETYPE_DIR}/imgui_freetype.cpp
 )
 
 find_package(SDL2 REQUIRED)
 find_package(${GRAPHICS_API_RAW} REQUIRED)
+find_package(Freetype REQUIRED)
 
 
 add_library(imgui)
 target_sources(imgui PRIVATE ${IMGUI_SOURCES})
-target_include_directories(imgui PUBLIC ${IMGUI_DIR} ${IMGUI_BACKEND_DIR})
-target_link_libraries(imgui PUBLIC SDL2::SDL2 ${GRAPHICS_API_RAW}::${GRAPHICS_API_RAW})
+target_include_directories(imgui PUBLIC ${IMGUI_DIR} ${IMGUI_BACKEND_DIR} ${FREETYPE_INCLUDE_DIRS} ${IMGUI_FREETYPE_DIR})
+target_link_libraries(imgui PUBLIC SDL2::SDL2 ${GRAPHICS_API_RAW}::${GRAPHICS_API_RAW} ${FREETYPE_LIBRARIES})
 
 add_library(imgui::imgui ALIAS imgui)
 
 
-# STB_IMAGE
+### STB_IMAGE ###
 
 set(STB_IMAGE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stb_image)
 set(STB_IMAGE_SOURCES ${STB_IMAGE_DIR}/stb_image.cpp)

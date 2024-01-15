@@ -24,6 +24,15 @@ set(CONCRETE_SOURCES
     ${CONCRETE_DIR}/system.cpp
 )
 
+##################### Frontend #####################
+
+set(FRONTEND_DIR ${PISTACHIO_DIR}/frontend)
+
+set(FRONTEND_SOURCES
+    ${FRONTEND_DIR}/application.cpp
+)
+
+
 
 add_subdirectory(src/vendor)
 
@@ -32,11 +41,13 @@ set(PISTACHIO_INCLUDE_DIRS
     ${CORE_DIR}
     ${CORE_MODEL_DIR}
     ${CONCRETE_DIR}
+    ${FRONTEND_DIR}
 )
 
 set(PISTACHIO_SOURCES
     ${CORE_SOURCES}
     ${CONCRETE_SOURCES}
+    ${FRONTEND_SOURCES}
 )
 
 list(APPEND PISTACHIO_SOURCES ${PISTACHIO_DIR}/main.cpp)
