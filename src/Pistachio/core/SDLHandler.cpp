@@ -33,8 +33,6 @@ void SDLHandler::cleanUp() {
 }
 
 
-
-
 std::queue<SDL_Event> SDLHandler::eventHandler() {
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
