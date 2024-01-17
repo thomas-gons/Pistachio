@@ -12,25 +12,25 @@
 
 
 
-class Application {
-    SDL_Window* window;
-    SDL_GLContext gl_context;
-    ImGuiIO* io;
-
-public:
-    Application();
-    ~Application();
-    void run();
-
-private:
-        /**
-     * @brief generic error logger
-     * @tparam Args variadic template for the arguments
-     * @param fmt the format string
-     * @param args the arguments
-     */
-    template<typename... Args>
-    void logError(const char *fmt, Args... args);
-};
+//class Application {
+//    SDL_Window* window;
+//    SDL_GLContext gl_context;
+//    ImGuiIO* io;
+//
+//public:
+//    Application();
+//    ~Application();
+//    void run();
+//
+//private:
+//        /**
+//     * @brief generic error logger
+//     * @tparam Args variadic template for the arguments
+//     * @param fmt the format string
+//     * @param args the arguments
+//     */
+//    template<typename... Args>
+//    void logError(const char *fmt, Args... args);
+//};
 
 

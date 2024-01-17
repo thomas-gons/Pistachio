@@ -54,8 +54,13 @@ list(APPEND PISTACHIO_SOURCES ${PISTACHIO_DIR}/main.cpp)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glm REQUIRED)
 
-add_executable(${CMAKE_PROJECT_NAME})
+
+add_executable(${CMAKE_PROJECT_NAME}
+        src/Pistachio/frontend/image.h)
 target_sources(${CMAKE_PROJECT_NAME} PUBLIC ${PISTACHIO_SOURCES})
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${PISTACHIO_INCLUDE_DIRS})
-target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC vendor SDL2::SDL2 SDL2_image)
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${PISTACHIO_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS})
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC vendor SDL2::SDL2 SDL2_image OpenGL::GL GLEW::GLEW)

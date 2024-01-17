@@ -45,7 +45,7 @@ set(IMGUI_SOURCES
         ${IMGUI_DIR}/imgui_widgets.cpp
 
         ${IMGUI_BACKEND_DIR}/imgui_impl_${GRAPHICS_API}.cpp
-        ${IMGUI_BACKEND_DIR}/imgui_impl_sdl2.cpp
+        ${IMGUI_BACKEND_DIR}/imgui_impl_glfw.cpp
 
         ${IMGUI_FREETYPE_DIR}/imgui_freetype.cpp
 )
@@ -53,12 +53,15 @@ set(IMGUI_SOURCES
 find_package(SDL2 REQUIRED)
 find_package(${GRAPHICS_API_RAW} REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+
 
 
 add_library(imgui)
 target_sources(imgui PRIVATE ${IMGUI_SOURCES})
-target_include_directories(imgui PUBLIC ${IMGUI_DIR} ${IMGUI_BACKEND_DIR} ${FREETYPE_INCLUDE_DIRS} ${IMGUI_FREETYPE_DIR})
-target_link_libraries(imgui PUBLIC SDL2::SDL2 ${GRAPHICS_API_RAW}::${GRAPHICS_API_RAW} ${FREETYPE_LIBRARIES})
+target_include_directories(imgui PUBLIC ${IMGUI_DIR} ${IMGUI_BACKEND_DIR} ${FREETYPE_INCLUDE_DIRS} ${IMGUI_FREETYPE_DIR} ${GLEW_INCLUDE_DIRS})
+target_link_libraries(imgui PUBLIC SDL2::SDL2 ${GRAPHICS_API_RAW}::${GRAPHICS_API_RAW} ${FREETYPE_LIBRARIES} ${GLEW_LIBRARIES} glfw)
 
 add_library(imgui::imgui ALIAS imgui)
 
