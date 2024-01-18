@@ -6,12 +6,15 @@
 
 #include <iostream>
 
-
+void GLAPIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+    std::cout << "GL CALLBACK: " << (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "") << " type = " << type << ", severity = " << severity << ", message = " << message << std::endl;
+}
 
 int main()
 {
     const unsigned int width = 800;
-    const unsigned int height = 600;
+    const unsigned int height = 800;
 
     const glm::vec2 screen = glm::vec2(width, height);
 
@@ -44,13 +47,9 @@ int main()
         return -1;
     }
 
-
-    // build and compile our shader program
-    auto shaderBuffer = Shader();
-    shaderBuffer.addShader("vertex.glsl", GL_VERTEX_SHADER);
-    shaderBuffer.addShader("fragment.glsl", GL_FRAGMENT_SHADER);
-    shaderBuffer.compile();
-    GLuint shaderProgram = shaderBuffer.getShaderProgram();
+    auto shader = Shader();
+    shader.processShader("resources/shaders/shader.glsl");
+    GLuint shaderProgram = shader.getShaderProgram();
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -86,10 +85,21 @@ int main()
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
-    shaderBuffer.setUniform("iResolution", screen);
+
+
+    glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+    // Set the debug callback function
+    glDebugMessageCallback(debugCallback, nullptr);
+
+    // Set debug output filter to show all messages
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
+
     // render loop
     // -----------
-    while (!glfwWindowShouldClose(window))
+    while(!glfwWindowShouldClose(window))
     {
 
         float currentFrame = glfwGetTime();
@@ -99,17 +109,14 @@ int main()
             glfwSetWindowShouldClose(window, true);
         }
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.7f, 0.3f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glm::vec2 iResolution = glm::vec2(width, height);
+        float iTime = glfwGetTime();
         glUseProgram(shaderProgram);
-
-        glm::vec2 iResolution;
-        shaderBuffer.getUniform("iResolution", iResolution);
-
-        std::cout << "iResolution: " << iResolution[0] << ", " << iResolution[1] << std::endl;
-        float iTime = 0.0f;
-        shaderBuffer.setUniform("iTime", iTime);
+        shader.setUniform("iResolution", iResolution);
+        shader.setUniform("iTime", iTime);
 
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -117,7 +124,6 @@ int main()
 
         glfwSwapBuffers(window);
         glfwPollEvents();
-
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
