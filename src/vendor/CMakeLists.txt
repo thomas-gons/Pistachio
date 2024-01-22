@@ -57,7 +57,6 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 
 
-
 add_library(imgui)
 target_sources(imgui PRIVATE ${IMGUI_SOURCES})
 target_include_directories(imgui PUBLIC ${IMGUI_DIR} ${IMGUI_BACKEND_DIR} ${FREETYPE_INCLUDE_DIRS} ${IMGUI_FREETYPE_DIR} ${GLEW_INCLUDE_DIRS})

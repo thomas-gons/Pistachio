@@ -1,12 +1,18 @@
 #shader vertex
 #version 330 core
-layout (location = 0) in vec2 position;
-layout (location = 1) in vec2 inTexCoord;
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec2 aTexCoord;
 
-out vec2 texCoord;
-void main(){
-    texCoord = inTexCoord;
-    gl_Position = vec4(position.x, position.y, 0.0f, 1.0f);
+out vec2 TexCoord;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main()
+{
+    gl_Position = projection * view * model * vec4(aPos, 1.0f);
+    TexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);
 }
 
 
@@ -14,38 +20,12 @@ void main(){
 #version 330 core
 out vec4 FragColor;
 
-uniform vec2 iResolution;
-uniform float iTime;
+in vec2 TexCoord;
 
-vec3 palette (float t) {
-    vec3 a = vec3(0.5, 0.5, 0.5);
-    vec3 b = vec3(0.5, 0.5, 0.5);
-    vec3 c = vec3(1.0, 1.0, 1.0);
-    vec3 d = vec3(0.243, 0.416, 0.557);
-    return a + b*cos( 6.28318*(c*t+d) );
-}
-
+uniform sampler2D texture1;
+uniform sampler2D texture2;
 
 void main()
 {
-    vec2 uv = (gl_FragCoord.xy * 2.0 - iResolution) / iResolution.y;
-    vec2 uv0 = uv;
-    vec3 finalColor = vec3(0.0);
-
-    for (float i = 0.0; i < 4.0; i++) {
-        uv = fract(uv * 1.5) - 0.5;
-        float d = length(uv) * exp(-length(uv0));
-
-        vec3 col = palette(length(uv0) + i*.4 + iTime*.4);
-
-        d = sin(d*8. + iTime)/8;
-        d = abs(d);
-
-        d = pow(0.01 / d, 1.2);
-
-        finalColor += col * d;
-    }
-
-
-    FragColor = vec4(finalColor, 1.0);
+    FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);
 }

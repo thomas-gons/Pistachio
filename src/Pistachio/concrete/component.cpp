@@ -6,7 +6,6 @@
 
 
 // This file only contains the implementation of the constructors of the components.
-
 GraphicsComponent::GraphicsComponent(const std::string& tag, Sprite *sprite, Animation *an) :
     tag(tag),
     sprite(sprite) {
