@@ -3,21 +3,25 @@
 //
 #pragma once
 
-#include <SDL_events.h>
-#include <SDL_timer.h>
-
 #include "component.h"
 #include "core/system.h"
+#include "GL/glew.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 
-class GraphicsSystem : public System {
+class RenderSystem : public System {
     Pool<GraphicsComponent> *_gc;
     Pool<TransformComponent> *_tc;
-    SDL_Renderer *renderer;
+
+    GLuint _VAO;
+    GLuint _VBO;
+    std::unique_ptr<float[]> _vertices;
+    glm::mat4 _model;
+    glm::mat4 _projection;
 
 public:
-    GraphicsSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc, SDL_Renderer *renderer) :
-        _gc(&gc), _tc(&tc), renderer(renderer) {};
+    RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc);
 
     void update() override;
 };

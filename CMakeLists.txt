@@ -3,8 +3,17 @@ project(Pistachio)
 
 set(CMAKE_CXX_STANDARD 17)
 
-
 set(PISTACHIO_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/Pistachio)
+
+
+##################### Application #####################
+
+set(APPLICATION_DIR ${PISTACHIO_DIR}/application)
+
+set(APPLICATION_SOURCES
+    ${APPLICATION_DIR}/application.cpp
+)
+
 
 ##################### Core #####################
 
@@ -13,11 +22,11 @@ set(CORE_MODEL_DIR ${CORE_DIR}/model)
 set(CORE_RESOURCE_MANAGER_DIR ${CORE_DIR}/resourceManager)
 
 set(CORE_SOURCES
-    ${CORE_DIR}/SDLHandler.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/shader.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/texture.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/resourceManager.cpp
 )
+
 
 ##################### Concrete #####################
 
@@ -33,12 +42,14 @@ add_subdirectory(src/vendor)
 
 set(PISTACHIO_INCLUDE_DIRS
     ${PISTACHIO_DIR}
+    ${APPLICATION_DIR}
     ${CORE_DIR}
     ${CORE_MODEL_DIR}
     ${CONCRETE_DIR}
 )
 
 set(PISTACHIO_SOURCES
+    ${APPLICATION_SOURCES}
     ${CORE_SOURCES}
     ${CONCRETE_SOURCES}
 )

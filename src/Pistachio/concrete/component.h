@@ -3,16 +3,14 @@
 //
 #pragma once
 
-#include <SDL_keycode.h>
-
 #include "core/component.h"
-#include "sprite.h"
-
+#include "core/resourceManager/resourceManager.h"
+#include "core/sprite.h"
+#include "misc/glfwKey.h"
 
 struct GraphicsComponent : public Component {
     const std::string& tag;
     Sprite *sprite;
-    SDL_Rect *srcRect;
 
     struct AnimationComponent {
         Animation animation;
@@ -35,7 +33,7 @@ struct TransformComponent : public Component {
 
 
 struct InputComponent : public Component {
-    std::unordered_map<SDL_Keycode, bool> keyStates;
-    explicit InputComponent(const std::vector<SDL_Keycode>& keyCodes);
+    std::unordered_map<GLFWkeyCode, bool> keyStates;
+    explicit InputComponent(const std::vector<GLFWkeyCode>& keyCodes);
 };
 

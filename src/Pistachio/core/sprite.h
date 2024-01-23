@@ -2,36 +2,20 @@
 // Created by thomas on 04/09/23.
 //
 
-#include <SDL2/SDL_render.h>
-
 #include "core/common.h"
-
+#include "core/resourceManager/texture.h"
 
 #pragma once
 
 /**
- * @brief A sprite is the basic unit of graphics in the game.\n
- * It is loaded from a file and contains a texture and its dimensions.\n
- * It is used by a @c GraphicsComponent to render a texture on the screen.
- * @note Only one sprite is generated for each texture
- *
- * @see Animation
+ * @brief A sprite is a generic texture that can be used to draw stuff on the screen.
  */
-struct Sprite {
-    /// the texture of the sprite (loaded from .png, .jpg, .bmp, etc.)
-    SDL_Texture *texture;
-
-    /// the width of the whole sprite in pixels
-    uint16_t width;
-
-    /// the height of the whole sprite in pixels
-    uint16_t height;
-};
+typedef Texture Sprite;
 
 /**
  * @brief Simple enum to describe the animation cycle.
  */
-enum  AnimationCycle {
+enum AnimationCycle {
     LOOP,
     ONCE
 };

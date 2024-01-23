@@ -33,7 +33,7 @@ GraphicsComponent::GraphicsComponent(const std::string& tag, Sprite *sprite, Ani
 TransformComponent::TransformComponent(double x, double y) : x(x), y(y) {}
 
 
-InputComponent::InputComponent(const std::vector<SDL_Keycode>& keyCodes) {
+InputComponent::InputComponent(const std::vector<GLFWkeyCode>& keyCodes) {
     for (auto &keyCode : keyCodes) {
         keyStates[keyCode] = false;
     }
