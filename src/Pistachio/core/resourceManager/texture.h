@@ -1,8 +1,10 @@
 //
 // Created by thomas on 22/01/24.
 //
+
 #pragma once
 
+#include <iostream>
 #include <GL/glew.h>
 #include <stb_image.h>
 

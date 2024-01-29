@@ -2,10 +2,11 @@
 // Created by thomas on 04/09/23.
 //
 
+#pragma once
+
 #include "core/common.h"
 #include "core/resourceManager/texture.h"
 
-#pragma once
 
 /**
  * @brief A sprite is a generic texture that can be used to draw stuff on the screen.

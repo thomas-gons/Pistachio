@@ -1,12 +1,17 @@
 //
 // Created by thomas on 05/09/23.
 //
+
 #pragma once
 
-#include "common.h"
-#include "pool.h"
+#include <GL/glew.h>
+#include <GLFW//glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-#define SIG_ESCAPE 1
+#include "common.h"
+#include "component.h"
+#include "pool.h"
 
 
 class System {
@@ -14,3 +19,43 @@ public:
     virtual void update() {};
 };
 
+// Concrete systems
+
+class RenderSystem : public System {
+    Pool<GraphicsComponent> *_gc;
+    Pool<TransformComponent> *_tc;
+
+    GLuint _VAO;
+    GLuint _VBO;
+    std::unique_ptr<float[]> _vertices;
+    glm::mat4 _model;
+    glm::mat4 _projection;
+
+public:
+    RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc);
+
+    void update() override;
+};
+
+
+class InputSystem : public System {
+    Pool<InputComponent> *_ic;
+
+public:
+
+    explicit InputSystem(Pool<InputComponent> & ic) : _ic(&ic) {};
+
+    int update(std::queue<SDL_Event> eventStream);
+};
+
+
+class MovementSystem : public System {
+    Pool<TransformComponent> *_tc;
+    Pool<InputComponent> *_ic;
+
+public:
+    MovementSystem(Pool<TransformComponent> &tc, Pool<InputComponent> &ic) :
+        _tc(&tc), _ic(&ic) {};
+
+    void update() override;
+};

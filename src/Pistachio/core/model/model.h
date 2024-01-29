@@ -6,12 +6,12 @@
 
 #include <fstream>
 #include <utility>
+
 #include "common.h"
-#include "concrete/component.h"
-#include "SDLHandler.h"
+#include "component.h"
+
 
 extern SDLHandler sdlHandler;
-
 
 class Model {
     std::string tag;

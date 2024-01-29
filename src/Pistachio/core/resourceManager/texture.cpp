@@ -1,7 +1,7 @@
 //
 // Created by thomas on 22/01/24.
 //
-#include <iostream>
+
 #include "texture.h"
 
 

@@ -1,10 +1,12 @@
 //
 // Created by thomas on 22/01/24.
 //
+
 #pragma once
 
 #include <unordered_map>
 #include <string>
+
 #include "texture.h"
 #include "shader.h"
 

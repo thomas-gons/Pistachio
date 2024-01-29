@@ -5,7 +5,6 @@
 #pragma once
 
 #include <typeindex>
-#include <unordered_map>
 #include <unordered_set>
 #include <any>
 
@@ -14,7 +13,6 @@
 #include "pool.h"
 #include "model/model.h"
 #include "model/modelManager.h"
-
 
 
 // entity is as a UUID on 32 bits

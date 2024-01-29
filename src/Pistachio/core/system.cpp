@@ -3,9 +3,6 @@
 //
 #include "system.h"
 
-#include <memory>
-
-
 //void RenderSystem::update() {
 //    for (size_t i = 0; i < _gc->size(); i++) {
 //        auto gc = &_gc->at(i);
@@ -42,14 +39,14 @@ RenderSystem::RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent>
     glGenBuffers(1, &_VBO);
 
     float vertices[] = {
-        // pos      // tex
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
+        // pos       // tex
+        0.0f, 1.0f,  0.0f, 1.0f,
+        1.0f, 0.0f,  1.0f, 0.0f,
+        0.0f, 0.0f,  0.0f, 0.0f,
 
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f
+        0.0f, 1.0f,  0.0f, 1.0f,
+        1.0f, 1.0f,  1.0f, 1.0f,
+        1.0f, 0.0f,  1.0f, 0.0f
     };
 
     _vertices = std::unique_ptr<float[]>(vertices);
@@ -73,13 +70,12 @@ RenderSystem::RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent>
 
 
 void RenderSystem::update() {
+
     for (size_t i = 0; i < _gc->size(); i++) {
         auto gc = &_gc->at(i);
         auto tc = &_tc->at(i);
         auto ac = gc->ac;
-        if (ac && SDL_GetTicks() - ac->lastFrameTime > ac->animation.frameDuration) {
-            gc->srcRect->x = (gc->srcRect->x + ac->animation.sWidth) % ac->animation.aWidth;
-            gc->srcRect->y = ac->animation.currentRow * ac->animation.sHeight;
+        if (ac &&
         }
     }
 }
@@ -99,7 +95,7 @@ int InputSystem::update(std::queue<SDL_Event> eventStream) {
         }
 
         if (keyCode == SDLK_ESCAPE) {
-            return SIG_ESCAPE;
+            return 1;
         }
     }
     return 0;

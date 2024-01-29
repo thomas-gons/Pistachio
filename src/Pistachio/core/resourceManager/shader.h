@@ -2,16 +2,11 @@
 // Created by thomas on 17/01/24.
 //
 
-//
-// Created by thomas on 17/01/24.
-//
-
 #pragma once
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
 #include <unordered_map>
 #include <GL/glew.h>
 #include <glm/glm.hpp>

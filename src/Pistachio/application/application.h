@@ -3,11 +3,12 @@
 //
 #pragma once
 
-#include "core/registry.h"
-#include "core/resourceManager/resourceManager.h"
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#include "core/registry.h"
+#include "core/resourceManager/resourceManager.h"
+#include "core/system.h"
 
 
 class Application {
@@ -29,6 +30,7 @@ public:
 
     Registry registry;
     ResourceManager resourceManager;
+    InputSystem inputSystem;
 
     Application();
     void run();

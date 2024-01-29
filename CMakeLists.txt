@@ -28,16 +28,6 @@ set(CORE_SOURCES
 )
 
 
-##################### Concrete #####################
-
-set(CONCRETE_DIR ${PISTACHIO_DIR}/concrete)
-
-set(CONCRETE_SOURCES
-    ${CONCRETE_DIR}/component.cpp
-    ${CONCRETE_DIR}/system.cpp
-)
-
-
 add_subdirectory(src/vendor)
 
 set(PISTACHIO_INCLUDE_DIRS
@@ -45,13 +35,11 @@ set(PISTACHIO_INCLUDE_DIRS
     ${APPLICATION_DIR}
     ${CORE_DIR}
     ${CORE_MODEL_DIR}
-    ${CONCRETE_DIR}
 )
 
 set(PISTACHIO_SOURCES
     ${APPLICATION_SOURCES}
     ${CORE_SOURCES}
-    ${CONCRETE_SOURCES}
 )
 
 list(APPEND PISTACHIO_SOURCES ${PISTACHIO_DIR}/main.cpp)
