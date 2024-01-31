@@ -20,4 +20,8 @@ public:
 
     void setTextureWraps(GLint wrapS, GLint wrapT) const;
     void setTextureFilters(GLint minFilter, GLint magFilter) const;
+
+    int getWidth() const { return width; }
+    int getHeight() const { return height; }
+    GLuint getTextureID() const { return textureID; }
 };

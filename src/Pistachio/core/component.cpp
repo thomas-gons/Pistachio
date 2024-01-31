@@ -10,8 +10,6 @@ GraphicsComponent::GraphicsComponent(const std::string& tag, Sprite *sprite, Ani
     tag(tag),
     sprite(sprite) {
 
-    srcRect = new SDL_Rect({0, 0, sprite->width, sprite->height});
-
     if (an) {
         uint8_t maxFrameCount;
         for (auto &i : an->frameCountPerRow) {
@@ -20,20 +18,16 @@ GraphicsComponent::GraphicsComponent(const std::string& tag, Sprite *sprite, Ani
             }
         }
 
-        an->sWidth = sprite->width / maxFrameCount;
-        an->sHeight = sprite->height / an->rowsCount;
+        an->sWidth = sprite->getWidth() / maxFrameCount;
+        an->sHeight = sprite->getHeight() / an->rowsCount;
         an->aWidth = an->sWidth * an->frameCountPerRow[an->currentRow];
         ac = new AnimationComponent(*an);
-        srcRect->w = an->sWidth;
-        srcRect->h = an->sHeight;
     }
 }
 
-
 TransformComponent::TransformComponent(double x, double y) : x(x), y(y) {}
 
-
-InputComponent::InputComponent(const std::vector<GLFWkeyCode>& keyCodes) {
+InputComponent::InputComponent(const std::vector<GLint>& keyCodes) {
     for (auto &keyCode : keyCodes) {
         keyStates[keyCode] = false;
     }

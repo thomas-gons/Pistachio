@@ -22,6 +22,8 @@ set(CORE_MODEL_DIR ${CORE_DIR}/model)
 set(CORE_RESOURCE_MANAGER_DIR ${CORE_DIR}/resourceManager)
 
 set(CORE_SOURCES
+    ${CORE_DIR}/component.cpp
+    ${CORE_DIR}/system.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/shader.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/texture.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/resourceManager.cpp

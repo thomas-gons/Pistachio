@@ -8,7 +8,6 @@
 
 #include "resourceManager/resourceManager.h"
 #include "sprite.h"
-#include "misc/glfwKey.h"
 
 
 using TComponentUUID = std::uint32_t;
@@ -39,6 +38,11 @@ struct GraphicsComponent : public Component {
 
     AnimationComponent *ac;
     GraphicsComponent(const std::string& tag, Sprite *sprite, Animation *an = nullptr);
+
+    friend std::ostream& operator<<(std::ostream& os, const GraphicsComponent& gc) {
+        os << "GraphicsComponent(tag: " << gc.tag << ")";
+        return os;
+    }
 };
 
 
@@ -46,10 +50,15 @@ struct TransformComponent : public Component {
     double x;
     double y;
     TransformComponent(double x, double y);
+
+    friend std::ostream& operator<<(std::ostream& os, const TransformComponent& tc) {
+        os << "TransformComponent(x: " << tc.x << ", y: " << tc.y << ")";
+        return os;
+    }
 };
 
 
 struct InputComponent : public Component {
-    std::unordered_map<GLFWkeyCode, bool> keyStates;
-    explicit InputComponent(const std::vector<GLFWkeyCode>& keyCodes);
+    std::unordered_map<GLint, bool> keyStates;
+    explicit InputComponent(const std::vector<GLint>& keyCodes);
 };

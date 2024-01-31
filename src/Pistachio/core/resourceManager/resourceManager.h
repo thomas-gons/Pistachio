@@ -18,6 +18,7 @@ class ResourceManager {
 public:
 
     void loadTexture(const char *name, const char *path);
+    void loadShader(const char *name, const char *path);
 
     template<typename... Args>
     void loadAllTextures(Args... args);

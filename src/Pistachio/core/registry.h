@@ -47,7 +47,7 @@ class Registry {
 public:
 
     Registry() {
-        modelManager.loadAllModels();
+//        modelManager.loadAllModels();
     }
 
     /**

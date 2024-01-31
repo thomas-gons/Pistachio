@@ -9,6 +9,7 @@
 #include "core/registry.h"
 #include "core/resourceManager/resourceManager.h"
 #include "core/system.h"
+#include "core/component.h"
 
 
 class Application {
@@ -29,8 +30,7 @@ private:
 public:
 
     Registry registry;
-    ResourceManager resourceManager;
-    InputSystem inputSystem;
+    RenderSystem renderSystem;
 
     Application();
     void run();

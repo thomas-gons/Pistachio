@@ -5,7 +5,7 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <GLFW//glfw3.h>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -27,13 +27,13 @@ class RenderSystem : public System {
 
     GLuint _VAO;
     GLuint _VBO;
-    std::unique_ptr<float[]> _vertices;
+    GLuint _EBO;
     glm::mat4 _model;
     glm::mat4 _projection;
 
 public:
+    RenderSystem() = default;
     RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc);
-
     void update() override;
 };
 
@@ -45,7 +45,7 @@ public:
 
     explicit InputSystem(Pool<InputComponent> & ic) : _ic(&ic) {};
 
-    int update(std::queue<SDL_Event> eventStream);
+    int update(std::queue<GLint> eventStream);
 };
 
 

@@ -65,14 +65,23 @@ public:
      * @return the element at the given index
      */
     T &operator[](std::uint32_t uuid) {
+        if (uuid >= _size) {
+            throw std::out_of_range("Index out of range");
+        }
         return _blocks[uuid / k_blockSize]->at(uuid % k_blockSize);
     }
 
-    Iterator begin() {
-        return Iterator(this, 0);
+    friend std::ostream& operator<<(std::ostream& os, const Pool<T>& pool) {
+        for (auto element : pool) {
+            os << element << std::endl;
+        }
     }
-    Iterator end() {
-        return Iterator(this, _size);
+
+    Iterator begin() const {
+        return Iterator(const_cast<Pool<T>*>(this), 0);
+    }
+    Iterator end() const {
+        return Iterator(const_cast<Pool<T>*>(this), _size);
     }
 
     /**

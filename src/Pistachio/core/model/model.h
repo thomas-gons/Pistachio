@@ -10,8 +10,7 @@
 #include "common.h"
 #include "component.h"
 
-
-extern SDLHandler sdlHandler;
+extern ResourceManager resourceManager;
 
 class Model {
     std::string tag;
@@ -23,7 +22,8 @@ class Model {
                     args["x"], args["y"]
             );
         } else if (componentTag == "GraphicsComponent") {
-            Sprite *sprite = sdlHandler.getSprite(args["texture"]);
+            // TODO: handle sprite and animation model
+            Sprite *sprite = nullptr;
             Animation *animation = nullptr;
             if (args.contains("AnimationComponent")) {
                 animation = createFromJson<Animation>(
