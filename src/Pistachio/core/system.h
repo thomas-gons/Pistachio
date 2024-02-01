@@ -34,7 +34,7 @@ class RenderSystem : public System {
 public:
     RenderSystem() = default;
     RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc);
-    void update() override;
+    void update(ResourceManager*);
 };
 
 

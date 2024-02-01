@@ -18,7 +18,6 @@
 // entity is as a UUID on 32 bits
 using Entity = std::uint32_t;
 
-
 /**
  * The registry is the central point of the ECS architecture.
  * It holds all the entities, components and their relationships.
@@ -52,16 +51,18 @@ public:
 
     /**
      * Creates a new entity and assigns it a UUID.
+     * @return the UUID of the entity
      */
-    void create() {
+    std::uint32_t create() {
         if (entityCount == MAX_ENTITIES) {
             std::cerr << "Maximum number of entities reached" << std::endl;
-            return;
+            return std::numeric_limits<std::uint32_t>::max();
         }
         entities.add(lastEntityUUID);
         entityToComponents[lastEntityUUID] = {};
         lastEntityUUID++;
         entityCount++;
+        return lastEntityUUID - 1;
     }
 
     /**
@@ -103,6 +104,11 @@ public:
             componentToEntities[typeHash] = {};
         }
 
+        if (entityToComponents[entityUUID].find(typeHash) != entityToComponents[entityUUID].end()) {
+            std::cerr << "Entity " << entityUUID << " already has a component of type "
+                      << componentNames[typeHash] << std::endl;
+            return;
+        }
         // retrieve the component type pool and converts it to add the component to it
         auto pool = &pools[typeHash];
         pool->add(component);
@@ -148,8 +154,12 @@ public:
         componentToEntities[typeHash].erase(componentUUID);
     }
 
-
-    void createFromModel(const std::string& modelName) {
+    /**
+     * Instantiates an entity with all its components based on a model.
+     * @param modelName the name of the model
+     * @return the UUID of the entity
+     */
+    std::uint32_t createFromModel(const std::string& modelName) {
         auto model = modelManager.getModel(modelName);
         this->create();
         // iterate through the constructor of the model
@@ -164,10 +174,16 @@ public:
                 this->assign<GraphicsComponent>(lastEntityUUID - 1, *gc);
             }
         }
+        return lastEntityUUID - 1;
     }
 
 private:
 
+    /**
+     * Checks if an entity exists and has not been destroyed.
+     * @param entityUUID the UUID of the entity
+     * @return true if the entity exists and has not been destroyed, false otherwise
+     */
     bool entityCheck(Entity entityUUID) {
         if (entities.empty()) {
             std::cerr << "There is no entity" << std::endl;

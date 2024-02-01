@@ -4,10 +4,12 @@
 
 #include "component.h"
 
+#include <utility>
+
 
 // This file only contains the implementation of the constructors of the components.
-GraphicsComponent::GraphicsComponent(const std::string& tag, Sprite *sprite, Animation *an) :
-    tag(tag),
+GraphicsComponent::GraphicsComponent(std::string tag, Sprite *sprite, Animation *an) :
+    tag(std::move(tag)),
     sprite(sprite) {
 
     if (an) {

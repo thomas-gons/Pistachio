@@ -39,24 +39,24 @@ RenderSystem::RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent>
     _tc = &tc;
     glGenVertexArrays(1, &_VAO);
     glGenBuffers(1, &_VBO);
+    glGenBuffers(1, &_EBO);
 
     float vertices[] = {
-         // pos         // tex
-         0.5f,  0.5f,   1.0f, 1.0f,   // top right
-         0.5f, -0.5f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f,   0.0f, 1.0f    // top left
+        // positions          // colors           // texture coords
+         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left
     };
-
     unsigned int indices[] = {
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
     };
+    glGenVertexArrays(1, &_VAO);
+    glGenBuffers(1, &_VBO);
+    glGenBuffers(1, &_EBO);
 
-    _model = glm::mat4(1.0f);
-    _projection = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
-
-     glBindVertexArray(_VAO);
+    glBindVertexArray(_VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -65,28 +65,31 @@ RenderSystem::RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent>
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
     // texture coord attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(2 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
+
+
+
 }
 
 
-void RenderSystem::update() {
+void RenderSystem::update(ResourceManager *resourceManager) {
+    Shader &shader = resourceManager->getShader("sprite");
+    shader.use();
     for (size_t i = 0; i < _gc->size(); i++) {
-        auto gc = &_gc->at(i);
-        auto tc = &_tc->at(i);
-        auto ac = gc->ac;
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // bind Texture
-        glBindTexture(GL_TEXTURE_2D, gc->sprite->getTextureID());
-
-        // render container
-        resourceManager->getShader("sprite").use();
+        GraphicsComponent &gc = _gc->at(i);
+        TransformComponent &tc = _tc->at(i);
+        tc.x += 0.1;
+        tc.y += 0.1;
+        shader.setUniform("x_dir", tc.x);
+        shader.setUniform("y_dir", tc.y);
+        glBindTexture(GL_TEXTURE_2D, gc.sprite->getTextureID());
         glBindVertexArray(_VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }

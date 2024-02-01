@@ -7,12 +7,13 @@
 
 bool Texture::loadTexture(const char* filename)
 {
-    unsigned char *data = stbi_load(filename, &this->width, &this->height, nullptr, 0);
+    stbi_set_flip_vertically_on_load(true);
+    int nrChannels;
+    unsigned char *data = stbi_load(filename, &this->width, &this->height, &nrChannels, 0);
     if (data == nullptr) {
         std::cerr << "Failed to load texture: " << filename << std::endl;
         return false;
     }
-
     // Create a OpenGL texture identifier
     glGenTextures(1, &this->textureID);
     glBindTexture(GL_TEXTURE_2D, this->textureID);

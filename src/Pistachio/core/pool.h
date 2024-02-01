@@ -75,6 +75,7 @@ public:
         for (auto element : pool) {
             os << element << std::endl;
         }
+        return os;
     }
 
     Iterator begin() const {

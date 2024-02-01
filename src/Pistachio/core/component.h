@@ -14,6 +14,7 @@ using TComponentUUID = std::uint32_t;
 using ComponentHash = std::size_t;
 
 class Component {
+
 public:
     Component() = default;
     virtual ~Component() = default;
@@ -25,19 +26,19 @@ using TComponentConstructor = std::function<std::shared_ptr<Component>()>;
 // Concrete components
 
 struct GraphicsComponent : public Component {
-    const std::string& tag;
+    const std::string tag;
     Sprite *sprite;
 
     struct AnimationComponent {
         Animation animation;
         uint16_t currentFrame = 0;
-        uint16_t lastFrameTime = 0;
+        double lastFrameTime = 0;
 
         explicit AnimationComponent(Animation an) : animation(std::move(an)) {}
     };
 
     AnimationComponent *ac;
-    GraphicsComponent(const std::string& tag, Sprite *sprite, Animation *an = nullptr);
+    GraphicsComponent(std::string tag, Sprite *sprite, Animation *an = nullptr);
 
     friend std::ostream& operator<<(std::ostream& os, const GraphicsComponent& gc) {
         os << "GraphicsComponent(tag: " << gc.tag << ")";
@@ -61,4 +62,19 @@ struct TransformComponent : public Component {
 struct InputComponent : public Component {
     std::unordered_map<GLint, bool> keyStates;
     explicit InputComponent(const std::vector<GLint>& keyCodes);
+
+    friend std::ostream& operator<<(std::ostream& os, const InputComponent& ic) {
+        os << "InputComponent(keyStates: {";
+        for (auto& [key, state] : ic.keyStates) {
+            os << key << ": " << state << ", ";
+        }
+        os << "})";
+        return os;
+    }
+};
+
+static std::unordered_map<std::uint64_t, std::string> componentNames = {
+    {typeid(GraphicsComponent).hash_code(), "GraphicsComponent"},
+    {typeid(TransformComponent).hash_code(), "TransformComponent"},
+    {typeid(InputComponent).hash_code(), "InputComponent"}
 };

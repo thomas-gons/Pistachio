@@ -57,3 +57,12 @@ add_executable(${CMAKE_PROJECT_NAME} ${PISTACHIO_SOURCES})
 target_sources(${CMAKE_PROJECT_NAME} PUBLIC ${PISTACHIO_SOURCES})
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${PISTACHIO_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS})
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC vendor SDL2::SDL2 SDL2_image OpenGL::GL GLEW::GLEW)
+
+
+list(REMOVE_ITEM PISTACHIO_SOURCES ${PISTACHIO_DIR}/main.cpp)
+list(APPEND PISTACHIO_SOURCES src/test/test.cpp)
+
+add_executable(${CMAKE_PROJECT_NAME}_test ${PISTACHIO_SOURCES})
+target_sources(${CMAKE_PROJECT_NAME}_test PUBLIC ${PISTACHIO_SOURCES})
+target_include_directories(${CMAKE_PROJECT_NAME}_test PUBLIC ${PISTACHIO_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS})
+target_link_libraries(${CMAKE_PROJECT_NAME}_test PUBLIC vendor SDL2::SDL2 SDL2_image OpenGL::GL GLEW::GLEW)

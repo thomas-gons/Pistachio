@@ -3,7 +3,6 @@
 //
 #include "application.h"
 
-ResourceManager resourceManager = ResourceManager();
 
 Application::Application() {
     glfwInit();
@@ -32,26 +31,27 @@ Application::Application() {
     glDebugMessageCallback(debugCallback, nullptr);
 
     registry.create();
+    resourceManager = ResourceManager();
     resourceManager.loadTexture("flame", "resources/assets/flame.png");
+    resourceManager.loadShader("sprite", "resources/shaders/sprite_shader.glsl");
     Sprite &sprite = resourceManager.getTexture("flame");
-    Animation animation = Animation(12, 2, {8, 8});
-    GraphicsComponent gc = GraphicsComponent("flame", &sprite, &animation);
+    Animation animation = Animation(12, {8, 8}, 2);
     TransformComponent tc = TransformComponent(0, 0);
+    GraphicsComponent gc = GraphicsComponent("flame", &sprite, &animation);
     registry.assign<GraphicsComponent>(0, gc);
     registry.assign<TransformComponent>(0, tc);
 
-    Pool<GraphicsComponent> gcPool = registry.getPool<GraphicsComponent>();
-    Pool<TransformComponent> tcPool = registry.getPool<TransformComponent>();
+    gcPool = registry.getPool<GraphicsComponent>();
+    tcPool = registry.getPool<TransformComponent>();
 
-    std::cout << tcPool;
-    std::cout << gcPool;
-    exit(0);
     renderSystem = RenderSystem(gcPool, tcPool);
 }
 
 void Application::run() {
     while (!glfwWindowShouldClose(_window)) {
-        renderSystem.update();
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        renderSystem.update(&resourceManager);
         glfwSwapBuffers(_window);
         glfwPollEvents();
     }

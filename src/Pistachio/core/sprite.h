@@ -39,11 +39,12 @@ enum AnimationRow {
  * @see Sprite
  */
 struct Animation {
-    /// The number of frames in each animation row
-    std::vector<uint8_t> frameCountPerRow;
 
     /// The duration of each frame in milliseconds (same for all animations)
     uint16_t frameDuration;
+
+    /// The number of frames in each animation row
+    std::vector<uint8_t> frameCountPerRow;
 
     /// The number of animations in the sprite sheet
     uint8_t rowsCount;
@@ -65,10 +66,10 @@ struct Animation {
     /**
      * @brief Construct an animation that will be referenced by a @c GraphicsComponent
      */
-    Animation(uint16_t frameDuration, uint8_t rowsCount, std::vector<uint8_t> frameCountPerRow) :
+    Animation(uint16_t frameDuration, std::vector<uint8_t> frameCountPerRow, uint8_t rowsCount) :
         frameDuration(frameDuration),
-        rowsCount(rowsCount),
-        frameCountPerRow(std::move(frameCountPerRow)) {}
+        frameCountPerRow(std::move(frameCountPerRow)),
+        rowsCount(rowsCount) {}
 };
 
 

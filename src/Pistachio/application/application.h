@@ -31,6 +31,9 @@ public:
 
     Registry registry;
     RenderSystem renderSystem;
+    ResourceManager resourceManager;
+    Pool<GraphicsComponent> gcPool;
+    Pool<TransformComponent> tcPool;
 
     Application();
     void run();
