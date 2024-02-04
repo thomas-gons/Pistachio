@@ -28,9 +28,3 @@ GraphicsComponent::GraphicsComponent(std::string tag, Sprite *sprite, Animation 
 }
 
 TransformComponent::TransformComponent(double x, double y) : x(x), y(y) {}
-
-InputComponent::InputComponent(const std::vector<GLint>& keyCodes) {
-    for (auto &keyCode : keyCodes) {
-        keyStates[keyCode] = false;
-    }
-}

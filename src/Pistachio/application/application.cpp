@@ -41,16 +41,21 @@ Application::Application() {
     registry.assign<GraphicsComponent>(0, gc);
     registry.assign<TransformComponent>(0, tc);
 
+
     gcPool = registry.getPool<GraphicsComponent>();
     tcPool = registry.getPool<TransformComponent>();
 
     renderSystem = RenderSystem(gcPool, tcPool);
+    movementSystem = MovementSystem(tcPool);
+
+    glfwSetKeyCallback(_window, InputSystem::keyCallback);
 }
 
 void Application::run() {
     while (!glfwWindowShouldClose(_window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+        movementSystem.update();
         renderSystem.update(&resourceManager);
         glfwSwapBuffers(_window);
         glfwPollEvents();

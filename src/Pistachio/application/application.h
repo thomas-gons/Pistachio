@@ -31,6 +31,7 @@ public:
 
     Registry registry;
     RenderSystem renderSystem;
+    MovementSystem movementSystem;
     ResourceManager resourceManager;
     Pool<GraphicsComponent> gcPool;
     Pool<TransformComponent> tcPool;

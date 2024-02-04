@@ -3,6 +3,8 @@
 //
 #include "system.h"
 
+std::array<bool, 348> InputSystem::_keys;
+
 extern ResourceManager *resourceManager;
 
 //void RenderSystem::update() {
@@ -85,10 +87,8 @@ void RenderSystem::update(ResourceManager *resourceManager) {
     for (size_t i = 0; i < _gc->size(); i++) {
         GraphicsComponent &gc = _gc->at(i);
         TransformComponent &tc = _tc->at(i);
-        tc.x += 0.1;
-        tc.y += 0.1;
-        shader.setUniform("x_dir", tc.x);
-        shader.setUniform("y_dir", tc.y);
+        shader.setUniform("x_dir", (float) tc.x);
+        shader.setUniform("y_dir", (float) tc.y);
         glBindTexture(GL_TEXTURE_2D, gc.sprite->getTextureID());
         glBindVertexArray(_VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -96,54 +96,53 @@ void RenderSystem::update(ResourceManager *resourceManager) {
 }
 
 //// TODO: use key input callback define in glfw (see glfwSetKeyCallback)
-//int InputSystem::update(std::queue<SDL_Event> eventStream) {
-//    auto & inputComponent = _ic->at(0);
-//    while (!eventStream.empty()) {
-//        SDL_Event event = eventStream.front();
-//        eventStream.pop();
-//        SDL_Keycode keyCode = event.key.keysym.sym;
-//        if (event.type == SDL_KEYDOWN) {
-//            inputComponent.keyStates[keyCode] = true;
-//        }
-//        if (event.type == SDL_KEYUP) {
-//            inputComponent.keyStates[keyCode] = false;
-//        }
+void InputSystem::keyCallback(GLFWwindow *window, int keyCode, int scancode, int action, int mods) {
+    if (action == GLFW_PRESS) {
+        _keys[keyCode] = true;
+    }
+    if (action == GLFW_RELEASE) {
+        _keys[keyCode] = false;
+    }
+
+    if (keyCode == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+}
+
+const float verticalDelta = (16.f/9.f) * 0.01;
+
 //
-//        if (keyCode == SDLK_ESCAPE) {
-//            return 1;
-//        }
-//    }
-//    return 0;
-//}
-//
-//void MovementSystem::update() {
-//    auto ic = _ic->at(0);
-//    float dx = 0, dy = 0;
-//    int i = 0;
-//    for (auto & tc : *_tc) {
-//        if (i != 0) {
-//            break;
-//        }
-//        if (ic.keyStates[SDLK_z]) {
-//            dy--;
-//        }
-//        if (ic.keyStates[SDLK_q]) {
-//            dx--;
-//        }
-//        if (ic.keyStates[SDLK_s]) {
-//            dy++;
-//        }
-//        if (ic.keyStates[SDLK_d]) {
-//            dx++;
-//        }
-//
-//        if (dx != 0 && dy != 0) {
-//            dx /= 1.41421356237;
-//            dy /= 1.41421356237;
-//        }
-//
-//        tc.x += dx;
-//        tc.y += dy;
-//        i++;
-//    }
-//}
+void MovementSystem::update() {
+    float dx = 0, dy = 0;
+    int i = 0;
+    for (auto & tc : *_tc) {
+        if (i != 0) {
+            break;
+        }
+        if (InputSystem::_keys[GLFW_KEY_W]) {
+            dy += verticalDelta;
+        }
+        if (InputSystem::_keys[GLFW_KEY_A]) {
+            dx -= 0.01;
+        }
+        if (InputSystem::_keys[GLFW_KEY_S]) {
+            dy -= verticalDelta;
+        }
+        if (InputSystem::_keys[GLFW_KEY_D]) {
+            dx += 0.01;
+        }
+
+        if (dx != 0 && dy != 0) {
+            dx /= 1.41421356237;
+            dy /= 1.41421356237;
+        }
+
+        tc.x += dx;
+        tc.y += dy;
+        i++;
+    }
+}
+
+MovementSystem::MovementSystem(Pool<TransformComponent> &tc) {
+    _tc = &tc;
+}

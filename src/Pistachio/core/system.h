@@ -39,23 +39,18 @@ public:
 
 
 class InputSystem : public System {
-    Pool<InputComponent> *_ic;
-
 public:
-
-    explicit InputSystem(Pool<InputComponent> & ic) : _ic(&ic) {};
-
-    int update(std::queue<GLint> eventStream);
+    static std::array<bool, 348> _keys;
+    static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
 };
 
 
 class MovementSystem : public System {
-    Pool<TransformComponent> *_tc;
-    Pool<InputComponent> *_ic;
+    Pool<TransformComponent> *_tc{};
 
 public:
-    MovementSystem(Pool<TransformComponent> &tc, Pool<InputComponent> &ic) :
-        _tc(&tc), _ic(&ic) {};
+    MovementSystem() = default;
+    explicit MovementSystem(Pool<TransformComponent> &tc);
 
     void update() override;
 };

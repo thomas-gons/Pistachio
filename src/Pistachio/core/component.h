@@ -59,22 +59,7 @@ struct TransformComponent : public Component {
 };
 
 
-struct InputComponent : public Component {
-    std::unordered_map<GLint, bool> keyStates;
-    explicit InputComponent(const std::vector<GLint>& keyCodes);
-
-    friend std::ostream& operator<<(std::ostream& os, const InputComponent& ic) {
-        os << "InputComponent(keyStates: {";
-        for (auto& [key, state] : ic.keyStates) {
-            os << key << ": " << state << ", ";
-        }
-        os << "})";
-        return os;
-    }
-};
-
 static std::unordered_map<std::uint64_t, std::string> componentNames = {
     {typeid(GraphicsComponent).hash_code(), "GraphicsComponent"},
     {typeid(TransformComponent).hash_code(), "TransformComponent"},
-    {typeid(InputComponent).hash_code(), "InputComponent"}
 };

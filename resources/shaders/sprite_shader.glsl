@@ -11,7 +11,8 @@ out vec2 TexCoord;
 
 void main()
 {
-	gl_Position = vec4(aPos.x + x_dir, aPos.y + y_dir, aPos.z, 1.0);
+	vec2 offset = vec2(x_dir, y_dir);
+	gl_Position = vec4(aPos.xy + offset, aPos.z, 1.0);
 	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 }
 
