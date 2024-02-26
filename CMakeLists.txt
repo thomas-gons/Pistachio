@@ -24,6 +24,7 @@ set(CORE_RESOURCE_MANAGER_DIR ${CORE_DIR}/resourceManager)
 set(CORE_SOURCES
     ${CORE_DIR}/component.cpp
     ${CORE_DIR}/system.cpp
+    ${CORE_DIR}/quadArray.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/shader.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/texture.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/resourceManager.cpp
@@ -46,17 +47,17 @@ set(PISTACHIO_SOURCES
 
 list(APPEND PISTACHIO_SOURCES ${PISTACHIO_DIR}/main.cpp)
 
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
 
 
-add_executable(${CMAKE_PROJECT_NAME} ${PISTACHIO_SOURCES})
+add_executable(${CMAKE_PROJECT_NAME} ${PISTACHIO_SOURCES}
+        src/Pistachio/core/quadArray.h
+        src/Pistachio/core/quadArray.cpp)
 target_sources(${CMAKE_PROJECT_NAME} PUBLIC ${PISTACHIO_SOURCES})
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${PISTACHIO_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS})
-target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC vendor SDL2::SDL2 SDL2_image OpenGL::GL GLEW::GLEW)
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC vendor OpenGL::GL GLEW::GLEW)
 
 
 list(REMOVE_ITEM PISTACHIO_SOURCES ${PISTACHIO_DIR}/main.cpp)
@@ -65,4 +66,4 @@ list(APPEND PISTACHIO_SOURCES src/test/test.cpp)
 add_executable(${CMAKE_PROJECT_NAME}_test ${PISTACHIO_SOURCES})
 target_sources(${CMAKE_PROJECT_NAME}_test PUBLIC ${PISTACHIO_SOURCES})
 target_include_directories(${CMAKE_PROJECT_NAME}_test PUBLIC ${PISTACHIO_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS})
-target_link_libraries(${CMAKE_PROJECT_NAME}_test PUBLIC vendor SDL2::SDL2 SDL2_image OpenGL::GL GLEW::GLEW)
+target_link_libraries(${CMAKE_PROJECT_NAME}_test PUBLIC vendor OpenGL::GL GLEW::GLEW)

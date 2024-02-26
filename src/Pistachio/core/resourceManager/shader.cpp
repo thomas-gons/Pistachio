@@ -10,6 +10,11 @@ void Shader::processShader(const char *path) {
 
 std::unordered_map<GLenum, std::string> Shader::loadShader (const char *path) {
     std::ifstream stream(path);
+    if (!stream.is_open()) {
+        std::cout << "Failed to open shader file: " << path << std::endl;
+        exit(-1);
+    }
+
     std::string line;
     GLenum shaderType = GL_NONE;
     std::unordered_map<GLenum, std::ostringstream> shaderSources;

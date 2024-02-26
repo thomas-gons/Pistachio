@@ -64,5 +64,4 @@ void Application::run() {
 
 void Application::cleanUp() {
     glfwTerminate();
-
 }

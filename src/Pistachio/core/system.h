@@ -12,6 +12,7 @@
 #include "common.h"
 #include "component.h"
 #include "pool.h"
+#include "quadArray.h"
 
 
 class System {
@@ -25,11 +26,7 @@ class RenderSystem : public System {
     Pool<GraphicsComponent> *_gc;
     Pool<TransformComponent> *_tc;
 
-    GLuint _VAO;
-    GLuint _VBO;
-    GLuint _EBO;
-    glm::mat4 _model;
-    glm::mat4 _projection;
+    std::unordered_map<std::string, QuadArray> _quadArrays = {};
 
 public:
     RenderSystem() = default;
