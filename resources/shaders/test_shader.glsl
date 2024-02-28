@@ -1,6 +1,7 @@
 #shader vertex
 #version 460 core
 
+
 const int MAX_QUADS = 1000000;
 
 struct QuadInfoNDC {
@@ -12,18 +13,31 @@ struct QuadInfoNDC {
     vec2 tex_uv;
 };
 
-layout (location = 0) in vec2 vertexPos;
 layout (std430, binding = 0) buffer QuadInfoBuffer {
-    QuadInfoNDC quadInfo[MAX_QUADS];
     vec2 tex_wh;
+    QuadInfoNDC quadInfo[MAX_QUADS];
 };
 
-out vec2 final_tex_uv;
+flat out vec2 final_tex_uv;
+
+
+
+const vec2[] quadVertices = vec2[](
+    vec2( 0.0, 0.0 ),
+    vec2( 0.0, 1.0 ),
+    vec2( 1.0, 1.0 ),
+    vec2( 0.0, 0.0 ),
+    vec2( 1.0, 1.0),
+    vec2( 1.0, 0.0)
+);
 
 void main() {
-    vec2 newPos = vertexPos * quadInfo[gl_VertexID].quad_wh + quadInfo[gl_VertexID].quad_xy;
+    uint vertexIndex = gl_VertexID / 6;
+    ivec2 pos = ivec2(quadVertices[gl_VertexID % 6]);
+
+    vec2 newPos = pos * quadInfo[vertexIndex].quad_wh + quadInfo[vertexIndex].quad_xy;
     gl_Position = vec4(newPos, 0.5, 1.0);
-    final_tex_uv = vertexPos * tex_wh + quadInfo[gl_VertexID].tex_uv;
+    final_tex_uv = pos * tex_wh + quadInfo[vertexIndex].tex_uv;
 }
 
 #shader fragment
@@ -35,6 +49,7 @@ in vec2 final_tex_uv;
 
 // texture sampler
 uniform sampler2D textureData;
+
 
 void main() {
     FragColor = texture(textureData, final_tex_uv);
