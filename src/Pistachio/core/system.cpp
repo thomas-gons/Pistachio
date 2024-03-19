@@ -7,41 +7,8 @@ std::array<bool, 348> InputSystem::_keys;
 
 extern ResourceManager *resourceManager;
 
-//void RenderSystem::update() {
-//    for (size_t i = 0; i < _gc->size(); i++) {
-//        auto gc = &_gc->at(i);
-//        auto tc = &_tc->at(i);
-//        auto ac = gc->ac;
-//        if (ac && SDL_GetTicks() - ac->lastFrameTime > ac->animation.frameDuration) {
-//            gc->srcRect->x = (gc->srcRect->x + ac->animation.sWidth) % ac->animation.aWidth;
-//            gc->srcRect->y = ac->animation.currentRow * ac->animation.sHeight;
-//            // TODO: handle rows
-//            gc->srcRect->w = ac->animation.sWidth;
-//            gc->srcRect->h = ac->animation.sHeight;
-//            ac->currentFrame++;
-//            ac->lastFrameTime = SDL_GetTicks();
-//        }
-//
-//        auto destRect = new SDL_Rect({
-//            static_cast<int>(tc->x),
-//            static_cast<int>(tc->y),
-//            gc->srcRect->w,
-//            gc->srcRect->h
-//        });
-//
-//        SDL_RenderCopy(
-//                renderer, gc->sprite->texture,
-//                gc->srcRect, destRect
-//        );
-//    }
-//}
-
-RenderSystem::RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc) {
-    _gc = &gc;
-    _tc = &tc;
-
-    _quadArrays.emplace("sprite", QuadArray(1000));
-}
+RenderSystem::RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc) :
+    _gc(gc), _tc(tc){}
 
 
 void RenderSystem::update(ResourceManager *resourceManager) {
@@ -51,8 +18,6 @@ void RenderSystem::update(ResourceManager *resourceManager) {
         auto ac = gc->ac;
         double ndcX = (tc->x / 1920) * 2 - 1;
         double ndcY = (tc->y / 1080) * 2 - 1;
-
-
     }
 }
 

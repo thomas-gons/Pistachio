@@ -5,14 +5,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <vector>
 
 #include "resourceManager/resourceManager.h"
-#include "quadArray.h"
 
 #define WIDTH 1920
 #define HEIGHT 1080
 
-#define N_SPRITES (uint) 1000000
+#define N_SPRITES (uint) 100000
 
 struct QuadInfoNDC {
     glm::vec2 quad_xy;
@@ -78,10 +78,8 @@ int main() {
 
     uint n_frames = 18;
     uint n_rows = 3;
-    float frame_duration = 0.01;
+    float frame_duration = 0.08;
     glm::vec2 uvBase = glm::vec2(1/ (float) n_frames, 1 /(float) n_rows);
-
-    std::cout << uvBase.x << " " << uvBase.y << std::endl;
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
     glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::vec2), &uvBase);
@@ -97,6 +95,7 @@ int main() {
     int n = 0;
 
     double t;
+
     while (!glfwWindowShouldClose(window)) {
         t = glfwGetTime();
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -104,7 +103,7 @@ int main() {
         }
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindTexture(GL_TEXTURE_2D, tex.getTextureID());
 

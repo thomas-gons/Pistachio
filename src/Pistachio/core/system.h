@@ -12,7 +12,7 @@
 #include "common.h"
 #include "component.h"
 #include "pool.h"
-#include "quadArray.h"
+#include "spriteBatch.h"
 
 
 class System {
@@ -22,14 +22,17 @@ public:
 
 // Concrete systems
 
-class RenderSystem : public System {
-    Pool<GraphicsComponent> *_gc;
-    Pool<TransformComponent> *_tc;
+typedef struct {
+    std::vector<uint32_t> componentsIndexes;
+    SpriteBatch spriteBatch;
+} SpriteBatchInfo;
 
-    std::unordered_map<std::string, QuadArray> _quadArrays = {};
+class RenderSystem : public System {
+    Pool<GraphicsComponent> &_gc;
+    Pool<TransformComponent> &_tc;
+    std::unordered_map<std::string, SpriteBatchInfo> _spriteBatches;
 
 public:
-    RenderSystem() = default;
     RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc);
     void update(ResourceManager*);
 };

@@ -22,7 +22,7 @@ GraphicsComponent::GraphicsComponent(std::string tag, Sprite *sprite, Animation 
 
         an->sWidth = sprite->getWidth() / maxFrameCount;
         an->sHeight = sprite->getHeight() / an->rowsCount;
-        an->aWidth = an->sWidth * an->frameCountPerRow[an->currentRow];
+//        an->aWidth = an->sWidth * an->frameCountPerRow[an->currentRow];
         ac = new AnimationComponent(*an);
     }
 }

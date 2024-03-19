@@ -1,20 +1,23 @@
 #shader vertex
 #version 330 core
-layout (location = 0) in vec2 Position;
-layout (location = 1) in uint QuadId;
 
-#define MAX_QUADS 1000
-
-uniform QuadInfo {
-	vec2 basePosition[MAX_QUADS];
-	vec2 widthHeight[MAX_QUADS];
-	vec2 texCoords[MAX_QUADS];
-	vec2 texWidthHeight[MAX_QUADS];
+struct QuadInfo {
+	vec2 quad_xy;
+	vec2 quad_wh;
+	vec2 tex_xy;
+	vec2 tex_wh;
 };
+
+
+layout (std430, binding = 0) buffer QuadBuffer {
+	QuadInfo quadInfo[];
+};
+
 
 out vec2 TexCoord;
 
 void main() {
+	int vertexId = gl_VertexID / 6;
 	vec3 basePosition = vec3(basePosition[QuadId], 0.5);
 	vec2 widthHeight = Position * widthHeight[QuadId];
 	vec3 newPosition = basePosition + vec3(widthHeight, 0.0);

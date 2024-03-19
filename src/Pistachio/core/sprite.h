@@ -51,12 +51,6 @@ struct Animation {
 
     AnimationRow currentRow{AnimationRow::WALK};
 
-    /**
-     * @brief The width of the current animation row
-     * @note This is not the width of each frame
-     */
-    uint16_t aWidth{};
-
     /// The width of each frame
     uint16_t sWidth{};
 
