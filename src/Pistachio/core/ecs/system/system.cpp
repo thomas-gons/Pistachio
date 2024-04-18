@@ -5,20 +5,45 @@
 
 std::array<bool, 348> InputSystem::_keys;
 
-extern ResourceManager *resourceManager;
 
+/************** RENDER SYSTEM **************/
 RenderSystem::RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc) :
-    _gc(gc), _tc(tc){}
+    _gc(gc), _tc(tc) {}
 
 
-void RenderSystem::update(ResourceManager *resourceManager) {
-    for (size_t i = 0; i < _gc->size(); i++) {
-        auto gc = &_gc->at(i);
-        auto tc = &_tc->at(i);
-        auto ac = gc->ac;
-        double ndcX = (tc->x / 1920) * 2 - 1;
-        double ndcY = (tc->y / 1080) * 2 - 1;
+void RenderSystem::update() {
+    // sprite batching
+    for (auto &[tag, spriteBatchInfo] : _spriteBatchesInfo) {
+        auto &spriteBatch = spriteBatchInfo.spriteBatch;
+        double currentTime = glfwGetTime();
+        for (uint32_t i : spriteBatchInfo.componentsIndexes) {
+            auto gc = &_gc.at(i);
+            auto tc = &_tc.at(i);
+            auto ac = gc->ac;
+
+            if (ac->animation.frameDuration < currentTime - ac->lastFrameTime) {
+                ac->currentFrame = (ac->currentFrame + 1) % ac->animation.frameCountPerRow[ac->currentRow];
+                ac->lastFrameTime = currentTime;
+            }
+
+            QuadInfoNDC &quadInfoNDC = spriteBatch.quads[i];
+            quadInfoNDC.quad_xy = glm::vec2(
+                    2 * tc->x / 1980, tc->y / 1080
+            );
+
+            quadInfoNDC.quad_wh = glm::vec2(
+                    2 * gc->renderSize.x / 1980, gc->renderSize.y / 1080
+            );
+
+            quadInfoNDC.tex_uv = glm::vec2(
+                    ac->animation.tex_u * (float) ac->currentFrame,
+                    ac->animation.tex_v * (float) ac->currentRow
+            );
+        }
+        spriteBatch.updateSSBO();
+        spriteBatch.draw();
     }
+
 }
 
 //// TODO: use key input callback define in glfw (see glfwSetKeyCallback)

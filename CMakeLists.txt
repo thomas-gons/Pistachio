@@ -56,7 +56,9 @@ add_executable(${CMAKE_PROJECT_NAME} ${PISTACHIO_SOURCES}
         src/Pistachio/core/spriteBatch.h
         src/Pistachio/core/spriteBatch.cpp
         src/Pistachio/core/spriteBatch.cpp
-        src/Pistachio/core/spriteBatch.h)
+        src/Pistachio/core/spriteBatch.h
+        src/Pistachio/common.h
+        src/Pistachio/core/ecs/system/systemManager.h)
 target_sources(${CMAKE_PROJECT_NAME} PUBLIC ${PISTACHIO_SOURCES})
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${PISTACHIO_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS})
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC vendor OpenGL::GL GLEW::GLEW)

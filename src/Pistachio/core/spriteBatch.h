@@ -8,10 +8,10 @@
 #include <glm/glm.hpp>
 
 #include "core/common.h"
-#include "core/component.h"
+#include "core/ecs/component.h"
 
 #define SSBO_SIZE(n) (n * sizeof(QuadInfoNDC) + sizeof(glm::vec2))
-
+#define VERTEX_SIZE 6
 
 typedef struct QuadInfoNDC {
     glm::vec2 quad_xy;
@@ -27,7 +27,7 @@ private:
     static uint32_t _maxNSprites;
     static GLuint _globBindingIndex;
 
-    GLuint _ssbo;
+    GLuint _ssbo = 0;
     GLuint _bindingIndex;
 
 public:
@@ -35,6 +35,7 @@ public:
     glm::vec2 tex_wh;
 
     explicit SpriteBatch(uint32_t nSprites, GraphicsComponent &gc);
-    void updateSSBO();
+    inline void updateSSBO();
+    inline void draw() const;
 };
 

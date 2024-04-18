@@ -6,10 +6,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "core/registry.h"
-#include "core/resourceManager/resourceManager.h"
-#include "core/system.h"
-#include "core/component.h"
+#include "core/ecs/registry.h"
+#include "core/resources/resourceManager.h"
+#include "core/ecs/system/systemManager.h"
+#include "core/ecs/component.h"
 
 
 class Application {
@@ -30,8 +30,7 @@ private:
 public:
 
     Registry registry;
-    RenderSystem renderSystem;
-    MovementSystem movementSystem;
+    SystemManager systemManager;
     ResourceManager resourceManager;
     Pool<GraphicsComponent> gcPool;
     Pool<TransformComponent> tcPool;

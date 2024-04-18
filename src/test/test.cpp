@@ -7,12 +7,12 @@
 #include <iostream>
 #include <vector>
 
-#include "resourceManager/resourceManager.h"
+#include "resources/resourceManager.h"
 
 #define WIDTH 1920
 #define HEIGHT 1080
 
-#define N_SPRITES (uint) 100000
+#define N_SPRITES (uint) 5e6
 
 struct QuadInfoNDC {
     glm::vec2 quad_xy;

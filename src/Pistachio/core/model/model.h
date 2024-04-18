@@ -8,7 +8,7 @@
 #include <utility>
 
 #include "common.h"
-#include "component.h"
+#include "core/ecs/component.h"
 
 extern ResourceManager resourceManager;
 

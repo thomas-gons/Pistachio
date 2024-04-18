@@ -5,7 +5,7 @@
 #pragma once
 
 #include "core/common.h"
-#include "core/resourceManager/texture.h"
+#include "core/resources/texture.h"
 
 
 /**
@@ -49,13 +49,13 @@ struct Animation {
     /// The number of animations in the sprite sheet
     uint8_t rowsCount;
 
-    AnimationRow currentRow{AnimationRow::WALK};
+    uint16_t sWidth;
+    uint16_t sHeight;
 
-    /// The width of each frame
-    uint16_t sWidth{};
+    /// The texture coordinates of the sprite
+    float tex_u;
+    float tex_v;
 
-    /// The height of each frame
-    uint16_t sHeight{};
 
     /**
      * @brief Construct an animation that will be referenced by a @c GraphicsComponent
@@ -63,7 +63,12 @@ struct Animation {
     Animation(uint16_t frameDuration, std::vector<uint8_t> frameCountPerRow, uint8_t rowsCount) :
         frameDuration(frameDuration),
         frameCountPerRow(std::move(frameCountPerRow)),
-        rowsCount(rowsCount) {}
+        rowsCount(rowsCount) {
+
+        tex_u = 1 / (float) (*std::max_element(frameCountPerRow.begin(), frameCountPerRow.end()));
+        tex_v = 1 / (float) rowsCount;
+    }
+
 };
 
 

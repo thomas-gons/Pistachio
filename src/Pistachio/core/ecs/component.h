@@ -6,7 +6,7 @@
 
 #include <functional>
 
-#include "resourceManager/resourceManager.h"
+#include "resources/resourceManager.h"
 #include "sprite.h"
 
 
@@ -27,18 +27,22 @@ using TComponentConstructor = std::function<std::shared_ptr<Component>()>;
 
 struct GraphicsComponent : public Component {
     const std::string tag;
+    glm::vec2 renderSize;
     Sprite *sprite;
 
     struct AnimationComponent {
         Animation animation;
         uint16_t currentFrame = 0;
+        uint8_t currentRow{AnimationRow::IDLE};
         double lastFrameTime = 0;
 
         explicit AnimationComponent(Animation an) : animation(std::move(an)) {}
     };
 
     AnimationComponent *ac;
+
     GraphicsComponent(std::string tag, Sprite *sprite, Animation *an = nullptr);
+    GraphicsComponent(std::string tag, glm::vec2 renderSize, Sprite *sprite, Animation *an = nullptr);
 
     friend std::ostream& operator<<(std::ostream& os, const GraphicsComponent& gc) {
         os << "GraphicsComponent(tag: " << gc.tag << ")";

@@ -10,8 +10,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "common.h"
-#include "component.h"
-#include "pool.h"
+#include "core/ecs/component.h"
+#include "core/ecs/pool.h"
 #include "spriteBatch.h"
 
 
@@ -22,6 +22,8 @@ public:
 
 // Concrete systems
 
+
+/************** RENDER SYSTEM **************/
 typedef struct {
     std::vector<uint32_t> componentsIndexes;
     SpriteBatch spriteBatch;
@@ -30,14 +32,15 @@ typedef struct {
 class RenderSystem : public System {
     Pool<GraphicsComponent> &_gc;
     Pool<TransformComponent> &_tc;
-    std::unordered_map<std::string, SpriteBatchInfo> _spriteBatches;
+    std::unordered_map<std::string, SpriteBatchInfo> _spriteBatchesInfo;
 
 public:
     RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc);
-    void update(ResourceManager*);
+    void update() override;
 };
 
 
+/************** INPUT SYSTEM **************/
 class InputSystem : public System {
 public:
     static std::array<bool, 348> _keys;
@@ -45,6 +48,7 @@ public:
 };
 
 
+/************** MOVEMENT SYSTEM **************/
 class MovementSystem : public System {
     Pool<TransformComponent> *_tc{};
 
