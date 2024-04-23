@@ -1,49 +1,56 @@
 #shader vertex
 #version 460 core
 
-struct QuadInfo {
+
+struct QuadInfoNDC {
+// position and size of the quad to be drawn
 	vec2 quad_xy;
 	vec2 quad_wh;
-	vec2 tex_xy;
+
+// position of the texture to be applied to the quad
+	vec2 tex_uv;
+};
+
+layout (std430, binding = 0) buffer QuadInfoBuffer {
 	vec2 tex_wh;
+	QuadInfoNDC quadInfo[];
 };
 
-
-layout (std430, binding = 0) buffer QuadBuffer {
-	QuadInfo quadInfo[];
-};
+flat out vec2 final_tex_uv;
 
 
-out vec2 TexCoord;
+
+const vec2[] quadVertices = vec2[](
+vec2( 0.0, 0.0 ),
+vec2( 0.0, 1.0 ),
+vec2( 1.0, 1.0 ),
+vec2( 0.0, 0.0 ),
+vec2( 1.0, 1.0),
+vec2( 1.0, 0.0)
+);
 
 void main() {
-	int vertexId = gl_VertexID / 6;
-	vec3 basePosition = vec3(basePosition[QuadId], 0.5);
-	vec2 widthHeight = Position * widthHeight[QuadId];
-	vec3 newPosition = basePosition + vec3(widthHeight, 0.0);
-	gl_Position = vec4(newPosition, 1.0);
+	uint vertexIndex = gl_VertexID / 6;
+	ivec2 pos = ivec2(quadVertices[gl_VertexID % 6]);
 
-	vec2 baseTexCoord = texCoords[QuadId];
-	vec2 texWidthHeight = Position * texWidthHeight[QuadId];
-	TexCoord = baseTexCoord + texWidthHeight;
+	vec2 newPos = pos  * quadInfo[vertexIndex].quad_wh + quadInfo[vertexIndex].quad_xy;
+	gl_Position = vec4(newPos, 0.5, 1.0);
+	final_tex_uv = pos * tex_wh + quadInfo[vertexIndex].tex_uv;
 }
-
 
 #shader fragment
 #version 460 core
 
-layout(location = 0) out vec4 FragColor;
+out vec4 FragColor;
 
-in vec2 TexCoord;
+in vec2 final_tex_uv;
 
 // texture sampler
-uniform sampler2D texture1;
+uniform sampler2D textureData;
 
 
-void main()
-{
-	FragColor = texture2D(texture1, TexCoord);
-
+void main() {
+	FragColor = texture(textureData, final_tex_uv);
 	if (FragColor == vec4(0.0)) {
 		discard;
 	}

@@ -2,7 +2,9 @@
 // Created by thomas on 3/2/24.
 //
 
-#pragma once
+#ifndef SPRITEBATCH_H
+#define SPRITEBATCH_H
+
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -23,8 +25,7 @@ typedef struct QuadInfoNDC {
 class SpriteBatch {
 
 private:
-    static std::vector<QuadInfoNDC> _quadsTmp;
-    static uint32_t _maxNSprites;
+    const static uint32_t _maxNSprites = std::numeric_limits<uint32_t>::max();
     static GLuint _globBindingIndex;
 
     GLuint _ssbo = 0;
@@ -35,7 +36,9 @@ public:
     glm::vec2 tex_wh;
 
     explicit SpriteBatch(uint32_t nSprites, GraphicsComponent &gc);
-    inline void updateSSBO();
-    inline void draw() const;
+    void updateSSBO();
+    void draw() const;
 };
 
+
+#endif //SPRITEBATCH_H

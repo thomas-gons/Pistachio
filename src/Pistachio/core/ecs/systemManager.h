@@ -11,7 +11,7 @@
 class SystemManager {
 public:
 
-    std::unordered_map<std::type_index, std::unique_ptr<System>> systems;
+    std::unordered_map<std::type_index, std::shared_ptr<System>> systems;
     SystemManager() = default;
     ~SystemManager() = default;
 
@@ -22,7 +22,7 @@ public:
             return;
         }
         auto typeId = std::type_index(typeid(T));
-        systems[typeId] = std::make_unique<T>(std::forward<Args>(args)...);
+        systems[typeId] = std::make_shared<T>(std::forward<Args>(args)...);
     }
 
     template<typename T>

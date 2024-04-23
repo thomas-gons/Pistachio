@@ -46,6 +46,12 @@ void RenderSystem::update() {
 
 }
 
+void RenderSystem::addSpriteBatch(const std::string &tag) {
+    _spriteBatchesInfo[tag] = SpriteBatchInfo{
+            std::vector<uint32_t>()
+    };
+}
+
 //// TODO: use key input callback define in glfw (see glfwSetKeyCallback)
 void InputSystem::keyCallback(GLFWwindow *window, int keyCode, int scancode, int action, int mods) {
     if (action == GLFW_PRESS) {

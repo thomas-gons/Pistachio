@@ -65,7 +65,12 @@ struct Animation {
         frameCountPerRow(std::move(frameCountPerRow)),
         rowsCount(rowsCount) {
 
-        tex_u = 1 / (float) (*std::max_element(frameCountPerRow.begin(), frameCountPerRow.end()));
+        uint8_t maxFrames = 0;
+        for (auto &frameCount : frameCountPerRow) {
+            if (frameCount > maxFrames)
+                maxFrames = frameCount;
+        }
+        tex_u = 1 / (float) maxFrames;
         tex_v = 1 / (float) rowsCount;
     }
 

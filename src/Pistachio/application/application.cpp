@@ -6,8 +6,8 @@
 
 Application::Application() {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
@@ -36,7 +36,7 @@ Application::Application() {
     resourceManager.loadShader("sprite", "resources/shaders/sprite_shader.glsl");
     Sprite &sprite = resourceManager.getTexture("flame");
     Animation animation = Animation(12, {8, 8}, 2);
-    TransformComponent tc = TransformComponent(0, 0);
+    TransformComponent tc = TransformComponent(300, 300);
     GraphicsComponent gc = GraphicsComponent("flame", &sprite, &animation);
     registry.assign<GraphicsComponent>(0, gc);
     registry.assign<TransformComponent>(0, tc);

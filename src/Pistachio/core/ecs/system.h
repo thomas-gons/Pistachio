@@ -36,6 +36,7 @@ class RenderSystem : public System {
 
 public:
     RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc);
+    void addSpriteBatch(const std::string &tag);
     void update() override;
 };
 

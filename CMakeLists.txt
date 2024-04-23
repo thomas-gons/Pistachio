@@ -19,11 +19,13 @@ set(APPLICATION_SOURCES
 
 set(CORE_DIR ${PISTACHIO_DIR}/core)
 set(CORE_MODEL_DIR ${CORE_DIR}/model)
-set(CORE_RESOURCE_MANAGER_DIR ${CORE_DIR}/resourceManager)
+set(CORE_ECS_DIR ${CORE_DIR}/ecs)
+set(CORE_RESOURCE_MANAGER_DIR ${CORE_DIR}/resources)
 
 set(CORE_SOURCES
-    ${CORE_DIR}/component.cpp
-#    ${CORE_DIR}/system.cpp
+    ${CORE_DIR}/spriteBatch.cpp
+    ${CORE_ECS_DIR}/component.cpp
+    ${CORE_ECS_DIR}/system.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/shader.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/texture.cpp
     ${CORE_RESOURCE_MANAGER_DIR}/resourceManager.cpp
@@ -34,13 +36,12 @@ add_subdirectory(src/vendor)
 
 set(PISTACHIO_INCLUDE_DIRS
     ${PISTACHIO_DIR}
-#    ${APPLICATION_DIR}
+    ${APPLICATION_DIR}
     ${CORE_DIR}
-    ${CORE_MODEL_DIR}
 )
 
 set(PISTACHIO_SOURCES
-#    ${APPLICATION_SOURCES}
+    ${APPLICATION_SOURCES}
     ${CORE_SOURCES}
 )
 
@@ -52,13 +53,7 @@ find_package(glm REQUIRED)
 find_package(OpenMP REQUIRED)
 
 
-add_executable(${CMAKE_PROJECT_NAME} ${PISTACHIO_SOURCES}
-        src/Pistachio/core/spriteBatch.h
-        src/Pistachio/core/spriteBatch.cpp
-        src/Pistachio/core/spriteBatch.cpp
-        src/Pistachio/core/spriteBatch.h
-        src/Pistachio/common.h
-        src/Pistachio/core/ecs/system/systemManager.h)
+add_executable(${CMAKE_PROJECT_NAME} ${PISTACHIO_SOURCES})
 target_sources(${CMAKE_PROJECT_NAME} PUBLIC ${PISTACHIO_SOURCES})
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${PISTACHIO_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS})
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC vendor OpenGL::GL GLEW::GLEW)

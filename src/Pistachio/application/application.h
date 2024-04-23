@@ -8,7 +8,7 @@
 
 #include "core/ecs/registry.h"
 #include "core/resources/resourceManager.h"
-#include "core/ecs/system/systemManager.h"
+#include "core/ecs/systemManager.h"
 #include "core/ecs/component.h"
 
 
