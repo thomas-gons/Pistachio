@@ -2,14 +2,15 @@
 // Created by thomas on 17/11/23.
 //
 
-#pragma once
+#ifndef __MODEL_MANAGER_H__
+#define __MODEL_MANAGER_H__
 
 #include "common.h"
 #include "model.h"
 
 
 class ModelManager {
-    std::unordered_map<std::string, Model> models;
+    std::unordered_map<std::string, Model*> _mModels;
 
 public:
 
@@ -28,10 +29,12 @@ public:
 
     void loadModel(const std::string& modelTag) {
         std::string modelPath = "resources/config/" + modelTag + ".json";
-        models[modelTag] = Model(modelPath, modelTag);
+        _mModels[modelTag] = new Model(modelPath, modelTag);
     }
 
     Model getModel(const std::string& modelTag) {
-        return models[modelTag];
+        return *_mModels[modelTag];
     }
 };
+
+#endif //__MODEL_MANAGER_H__

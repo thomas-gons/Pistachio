@@ -2,8 +2,8 @@
 // Created by thomas on 3/2/24.
 //
 
-#ifndef SPRITEBATCH_H
-#define SPRITEBATCH_H
+#ifndef __SPRITE_BATCH_H__
+#define __SPRITE_BATCH_H__
 
 
 #include <GL/glew.h>
@@ -16,29 +16,32 @@
 #define VERTEX_SIZE 6
 
 typedef struct QuadInfoNDC {
-    glm::vec2 quad_xy;
-    glm::vec2 quad_wh;
-    glm::vec2 tex_uv;
+    glm::fvec2 mQuadXY;
+    glm::fvec2 mQuadWH;
+    glm::fvec2 mTexUV;
 } QuadInfoNDC;
 
 
 class SpriteBatch {
 
 private:
-    const static uint32_t _maxNSprites = std::numeric_limits<uint32_t>::max();
-    static GLuint _globBindingIndex;
+    const static uint32_t _mkMaxNSprites = std::numeric_limits<uint32_t>::max();
+    static GLuint _msGlobBindingIndex;
 
-    GLuint _ssbo = 0;
-    GLuint _bindingIndex;
+    GLuint _mVao = 0;
+    GLuint _mSsbo = 0;
+    GLuint _mBindingIndex;
 
 public:
-    std::vector<QuadInfoNDC> quads;
-    glm::vec2 tex_wh;
+    std::vector<QuadInfoNDC> mQuads;
+    glm::fvec2 mTexWH;
+    GLuint mTextureID;
 
-    explicit SpriteBatch(uint32_t nSprites, GraphicsComponent &gc);
+
+    SpriteBatch(uint32_t nSprites, GraphicsComponent &gc);
     void updateSSBO();
     void draw() const;
 };
 
 
-#endif //SPRITEBATCH_H
+#endif // __SPRITE_BATCH_H__

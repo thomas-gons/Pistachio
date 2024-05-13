@@ -9,22 +9,22 @@
 
 #include "resources/resourceManager.h"
 
-#define WIDTH 1920
-#define HEIGHT 1080
+#define WIDTH 800
+#define HEIGHT 600
 
-#define N_SPRITES (uint) 5e6
+#define N_SPRITES (uint) 1
 
 struct QuadInfoNDC {
-    glm::vec2 quad_xy;
-    glm::vec2 quad_wh;
-    glm::vec2 tex_uv;
+    glm::vec2 mQuadXY;
+    glm::vec2 mQuadWH;
+    glm::vec2 mTexUV;
 };
 
 
 int main() {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // glfw window creation
@@ -49,7 +49,7 @@ int main() {
     Shader sh = resourceManager.getShader("test");
     sh.use();
 
-    resourceManager.loadTexture("slime", "resources/assets/slime.png");
+    resourceManager.loadTexture("slime", "resources/assets/flame.png");
     Texture tex = resourceManager.getTexture("slime");
 
     GLuint vao;
@@ -69,15 +69,15 @@ int main() {
     auto quadInfoBufferTmp = std::vector<QuadInfoNDC>(N_SPRITES);
 
     for (auto &quadInfo: quadInfoBuffer) {
-        quadInfo.quad_xy = glm::vec2(rand() % 1920, rand() % 1080);
-        quadInfo.quad_wh = glm::vec2(tex.getWidth() / 18, tex.getHeight() / 3);
-        quadInfo.tex_uv = glm::vec2(0, 0);
+        quadInfo.mQuadXY = glm::vec2(rand() % WIDTH, rand() % HEIGHT);
+        quadInfo.mQuadWH = glm::vec2(tex.getWidth() / 8, tex.getHeight() / 2);
+        quadInfo.mTexUV = glm::vec2(0, 0);
     }
 
     uint row = 1, col = 0;
 
-    uint n_frames = 18;
-    uint n_rows = 3;
+    uint n_frames = 8;
+    uint n_rows = 2;
     float frame_duration = 0.08;
     glm::vec2 uvBase = glm::vec2(1/ (float) n_frames, 1 /(float) n_rows);
 
@@ -96,6 +96,7 @@ int main() {
 
     double t;
 
+    int i = 0;
     while (!glfwWindowShouldClose(window)) {
         t = glfwGetTime();
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -108,14 +109,22 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, tex.getTextureID());
 
         for (int i = 0; i < N_SPRITES; i++) {
-            quadInfoBufferTmp[i].quad_xy.x = 2 * (quadInfoBuffer[i].quad_xy.x / WIDTH) - 1;
-            quadInfoBufferTmp[i].quad_xy.y = 2 * (quadInfoBuffer[i].quad_xy.y / HEIGHT) - 1;
+            quadInfoBufferTmp[i].mQuadXY.x = 2 * (quadInfoBuffer[i].mQuadXY.x / WIDTH) - 1;
+            quadInfoBufferTmp[i].mQuadXY.y = 2 * (quadInfoBuffer[i].mQuadXY.y / HEIGHT) - 1;
 
-            quadInfoBufferTmp[i].quad_wh.x = 2 * (quadInfoBuffer[i].quad_wh.x / WIDTH);
-            quadInfoBufferTmp[i].quad_wh.y = 2 * (quadInfoBuffer[i].quad_wh.y / HEIGHT);
+            quadInfoBufferTmp[i].mQuadWH.x = 2 * (quadInfoBuffer[i].mQuadWH.x / WIDTH);
+            quadInfoBufferTmp[i].mQuadWH.y = 2 * (quadInfoBuffer[i].mQuadWH.y / HEIGHT);
 
-            quadInfoBufferTmp[i].tex_uv.x = uvBase.x * (float) frame[i];
-            quadInfoBufferTmp[i].tex_uv.y = uvBase.y * (float) row;
+            quadInfoBufferTmp[i].mTexUV.x = uvBase.x * (float) frame[i];
+            quadInfoBufferTmp[i].mTexUV.y = uvBase.y * (float) row;
+            std::cout << "Quad info: " << quadInfoBufferTmp[i].mQuadXY.x << ", " << quadInfoBufferTmp[i].mQuadXY.y
+                      << std::endl;
+            std::cout << "           " << quadInfoBufferTmp[i].mQuadWH.x << ", " << quadInfoBufferTmp[i].mQuadWH.y
+                        << std::endl;
+            std::cout << "           " << quadInfoBufferTmp[i].mTexUV.x << ", " << quadInfoBufferTmp[i].mTexUV.y
+                        << std::endl;
+            std::cout << "           " << uvBase.x << ", " << uvBase.y << std::endl;
+            std::cout << std::endl;
         }
 
         lastFrame = glfwGetTime();
@@ -135,7 +144,8 @@ int main() {
 
         glfwSwapBuffers(window);
         glfwPollEvents();
-        std::cout << 1 / (glfwGetTime() - t) << std::endl;
+        if (++i == 10) {
+        }
     }
     glfwDestroyWindow(window);
 

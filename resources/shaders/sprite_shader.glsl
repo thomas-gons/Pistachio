@@ -3,11 +3,11 @@
 
 
 struct QuadInfoNDC {
-// position and size of the quad to be drawn
+	// position and size of the quad to be drawn
 	vec2 quad_xy;
 	vec2 quad_wh;
 
-// position of the texture to be applied to the quad
+	// position of the texture to be applied to the quad
 	vec2 tex_uv;
 };
 
@@ -21,12 +21,12 @@ flat out vec2 final_tex_uv;
 
 
 const vec2[] quadVertices = vec2[](
-vec2( 0.0, 0.0 ),
-vec2( 0.0, 1.0 ),
-vec2( 1.0, 1.0 ),
-vec2( 0.0, 0.0 ),
-vec2( 1.0, 1.0),
-vec2( 1.0, 0.0)
+	vec2( 0.0, 0.0 ),
+	vec2( 0.0, 1.0 ),
+	vec2( 1.0, 1.0 ),
+	vec2( 0.0, 0.0 ),
+	vec2( 1.0, 1.0),
+	vec2( 1.0, 0.0)
 );
 
 void main() {
@@ -51,7 +51,7 @@ uniform sampler2D textureData;
 
 void main() {
 	FragColor = texture(textureData, final_tex_uv);
-	if (FragColor == vec4(0.0)) {
+	if (FragColor.a == 0.0) {
 		discard;
 	}
 }

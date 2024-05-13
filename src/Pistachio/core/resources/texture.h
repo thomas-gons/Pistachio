@@ -2,7 +2,8 @@
 // Created by thomas on 22/01/24.
 //
 
-#pragma once
+#ifndef __TEXTURE_H__
+#define __TEXTURE_H__
 
 #include <iostream>
 #include <GL/glew.h>
@@ -25,3 +26,5 @@ public:
     int getHeight() const { return height; }
     GLuint getTextureID() const { return textureID; }
 };
+
+#endif //__TEXTURE_H__

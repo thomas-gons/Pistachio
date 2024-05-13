@@ -1,7 +1,8 @@
 //
 // Created by thomas on 23/01/24.
 //
-#pragma once
+#ifndef __APPLICATION_H__
+#define __APPLICATION_H__
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -15,9 +16,9 @@
 class Application {
 
 private:
-    GLFWwindow *_window;
-    GLint _width = 1920;
-    GLint _height = 1080;
+    GLFWwindow *_mWindow;
+    GLint _mWidth = WIDTH;
+    GLint _mHeight = HEIGHT;
 
     static void GLAPIENTRY debugCallback (
             GLenum source, GLenum type, GLuint id, GLenum severity,
@@ -29,13 +30,15 @@ private:
 
 public:
 
-    Registry registry;
-    SystemManager systemManager;
-    ResourceManager resourceManager;
-    Pool<GraphicsComponent> gcPool;
-    Pool<TransformComponent> tcPool;
+    Registry mRegistry;
+    SystemManager mSystemManager;
+    ResourceManager mResourceManager;
+    Pool<GraphicsComponent> mGcPool;
+    Pool<TransformComponent> mTcPool;
 
     Application();
     void run();
     void cleanUp();
 };
+
+#endif //__APPLICATION_H__

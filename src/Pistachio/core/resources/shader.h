@@ -2,7 +2,8 @@
 // Created by thomas on 17/01/24.
 //
 
-#pragma once
+#ifndef __SHADER_H__
+#define __SHADER_H__
 
 #include <iostream>
 #include <fstream>
@@ -16,7 +17,7 @@
 class Shader {
 
 private:
-    std::unordered_map<GLenum, std::string> loadShader (const char *path);
+    std::unordered_map<GLenum, std::string> loadShader(const char *path);
     void compileShader(std::unordered_map<GLenum, std::string> &shaderSources);
 
     template <typename T>
@@ -26,7 +27,7 @@ private:
     void getUniformValue(GLint location, T& value) const {};
 
 public:
-    GLuint shaderProgram;
+    GLuint mShaderProgram;
 
     void processShader(const char *path);
 
@@ -34,7 +35,7 @@ public:
 
     template <typename T>
     void setUniform(const char *name, T value) const {
-        GLint location = glGetUniformLocation(shaderProgram, name);
+        GLint location = glGetUniformLocation(mShaderProgram, name);
         if (location != -1) {
             setUniformValue<T>(location, value);
         } else {
@@ -44,10 +45,8 @@ public:
 
     template <typename T>
     void getUniform(const char *name, T& value) const {
-
-        GLint location = glGetUniformLocation(shaderProgram, name);
+        GLint location = glGetUniformLocation(mShaderProgram, name);
         if (location != -1) {
-            // if T is a pointer
             if constexpr (std::is_pointer<T>::value) {
                 getUniformValue<T>(location, glm::value_ptr(&value));
             } else {
@@ -59,3 +58,5 @@ public:
         }
     }
 };
+
+#endif //__SHADER_H__

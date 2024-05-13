@@ -8,29 +8,18 @@
 
 
 GraphicsComponent::GraphicsComponent(std::string tag, Sprite *sprite, Animation *an) :
-    tag(std::move(tag)),
-    sprite(sprite) {
+        mkTag(std::move(tag)),
+        mSprite(sprite) {
 
-    renderSize = glm::vec2(sprite->getWidth(), sprite->getHeight());
     if (an != nullptr) {
 
-        uint8_t maxFrameCount = *std::max(an->frameCountPerRow.begin(), an->frameCountPerRow.end());
+        uint8_t maxFrameCount = 0;
+        for (uint8_t i = 0; i < an->mRowsCount; i++)
+            maxFrameCount = std::max(maxFrameCount, an->mFrameCountPerRow[i]);
 
-        an->sWidth = sprite->getWidth() / maxFrameCount;
-        an->sHeight = sprite->getHeight() / an->rowsCount;
-        new AnimationComponent(*an);
+        an->mFrameW = sprite->getWidth() / maxFrameCount;
+        an->mFrameH = sprite->getHeight() / an->mRowsCount;
+        mAc = new AnimationComponent(*an);
     }
 
 }
-
-GraphicsComponent::GraphicsComponent(std::string tag, glm::vec2 renderSize, Sprite *sprite, Animation *an) :
-    tag(std::move(tag)),
-    renderSize(renderSize),
-    sprite(sprite) {
-
-    ac = (an == nullptr) ? nullptr : new AnimationComponent(*an);
-}
-
-
-
-TransformComponent::TransformComponent(double x, double y) : x(x), y(y) {}

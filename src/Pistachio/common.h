@@ -2,11 +2,11 @@
 // Created by thomas on 4/18/24.
 //
 
-#ifndef PISTACHIO_COMMON_H
-#define PISTACHIO_COMMON_H
+#ifndef __PISTACHIO_COMMON_H__
+#define __PISTACHIO_COMMON_H__
 
-#define WIDTH 1920
-#define HEIGHT 1080
+#define WIDTH 800
+#define HEIGHT 600
 
 
-#endif //PISTACHIO_COMMON_H
+#endif //__PISTACHIO_COMMON_H__

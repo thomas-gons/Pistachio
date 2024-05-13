@@ -2,8 +2,8 @@
 // Created by thomas on 4/18/24.
 //
 
-#ifndef PISTACHIO_SYSTEMMANAGER_H
-#define PISTACHIO_SYSTEMMANAGER_H
+#ifndef __SYSTEM_MANAGER_H__
+#define __SYSTEM_MANAGER_H__
 
 #include "system.h"
 #include <typeindex>
@@ -47,4 +47,4 @@ public:
 
 };
 
-#endif //PISTACHIO_SYSTEMMANAGER_H
+#endif //__SYSTEM_MANAGER_H__

@@ -1,8 +1,9 @@
 //
 // Created by thomas on 01/09/23.
 //
+#ifndef __REGISTRY_H__
+#define __REGISTRY_H__
 
-#pragma once
 
 #include <typeindex>
 #include <unordered_set>
@@ -20,28 +21,28 @@ using Entity = std::uint32_t;
 
 /**
  * The registry is the central point of the ECS architecture.
- * It holds all the entities, components and their relationships.
- * It also provides methods to create, destroy and assign components to entities.
- * @tparam MAX_ENTITIES the maximum number of entities that can be created
+ * It holds all the mEntities, components and their relationships.
+ * It also provides methods to create, destroy and assign components to mEntities.
+ * @tparam MAX_ENTITIES the maximum number of mEntities that can be created
  * @tparam lastEntityUUID the last entity UUID that was created
- * @tparam entityCount the number of entities that were created
- * @tparam entities an array of entity UUIDs
- * @tparam destroyedEntities a set of all the entities that were destroyed
+ * @tparam entityCount the number of mEntities that were created
+ * @tparam mEntities an array of entity UUIDs
+ * @tparam destroyedEntities a set of all the mEntities that were destroyed
  * @tparam entityComponents a map of all the components that were assigned to an entity.
  * @tparam pools a map of all the component pools.
  */
 class Registry {
 
-    std::uint32_t lastEntityUUID = 0;
-    std::uint32_t entityCount = 0;
-    Pool<uint32_t> entities = {};
-    std::unordered_set<Entity> destroyedEntities = {};
+    std::uint32_t _mLastEntityUUID = 0;
+    std::uint32_t _mEntityCount = 0;
+    Pool<uint32_t> _mEntities = {};
+    std::unordered_set<Entity> _mDestroyedEntities = {};
 
-    std::unordered_map<Entity, std::unordered_map<ComponentHash, TComponentUUID>> entityToComponents = {};
-    std::unordered_map<ComponentHash, std::unordered_map<TComponentUUID , Entity>> componentToEntities = {};
-    std::unordered_map<ComponentHash, Pool<std::any>> pools;
+    std::unordered_map<Entity, std::unordered_map<ComponentHash, TComponentUUID>> _mEntityToComponents = {};
+    std::unordered_map<ComponentHash, std::unordered_map<TComponentUUID , Entity>> _mComponentToEntities = {};
+    std::unordered_map<ComponentHash, Pool<std::any>> _mPools;
 
-    ModelManager modelManager = ModelManager();
+    ModelManager _mModelManager = ModelManager();
 
 public:
 
@@ -54,15 +55,15 @@ public:
      * @return the UUID of the entity
      */
     std::uint32_t create() {
-        if (entityCount == MAX_ENTITIES) {
+        if (_mEntityCount == MAX_ENTITIES) {
             std::cerr << "Maximum number of entities reached" << std::endl;
             return std::numeric_limits<std::uint32_t>::max();
         }
-        entities.add(lastEntityUUID);
-        entityToComponents[lastEntityUUID] = {};
-        lastEntityUUID++;
-        entityCount++;
-        return lastEntityUUID - 1;
+        _mEntities.add(_mLastEntityUUID);
+        _mEntityToComponents[_mLastEntityUUID] = {};
+        _mLastEntityUUID++;
+        _mEntityCount++;
+        return _mLastEntityUUID - 1;
     }
 
     /**
@@ -73,17 +74,17 @@ public:
         if (!entityCheck(entityUUID)) return;
 
         // remove all mapping of the entity to its components and the components themselves
-        for (auto &component : entityToComponents.at(entityUUID)) {
+        for (auto &component : _mEntityToComponents.at(entityUUID)) {
             auto typeHash = component.first;
             auto componentUUID = component.second;
-            componentToEntities[typeHash].erase(componentUUID);
-            pools[typeHash].remove(componentUUID);
+            _mComponentToEntities[typeHash].erase(componentUUID);
+            _mPools[typeHash].remove(componentUUID);
         }
 
-        entityToComponents.erase(entityUUID);
-        entities.remove(entityUUID);
-        entityCount--;
-        destroyedEntities.insert(entityUUID);
+        _mEntityToComponents.erase(entityUUID);
+        _mEntities.remove(entityUUID);
+        _mEntityCount--;
+        _mDestroyedEntities.insert(entityUUID);
     }
 
     /**
@@ -97,24 +98,24 @@ public:
         if (!entityCheck(entityUUID)) return;
 
         auto typeHash = typeid(U).hash_code();
-        if (pools.find(typeHash) == pools.end()) {
-            pools[typeHash] = Pool<std::any>();
+        if (_mPools.find(typeHash) == _mPools.end()) {
+            _mPools[typeHash] = Pool<std::any>();
         }
-        if (componentToEntities.find(typeHash) == componentToEntities.end()) {
-            componentToEntities[typeHash] = {};
+        if (_mComponentToEntities.find(typeHash) == _mComponentToEntities.end()) {
+            _mComponentToEntities[typeHash] = {};
         }
 
-        if (entityToComponents[entityUUID].find(typeHash) != entityToComponents[entityUUID].end()) {
+        if (_mEntityToComponents[entityUUID].find(typeHash) != _mEntityToComponents[entityUUID].end()) {
             std::cerr << "Entity " << entityUUID << " already has a component of type "
                       << componentNames[typeHash] << std::endl;
             return;
         }
         // retrieve the component type pool and converts it to add the component to it
-        auto pool = &pools[typeHash];
+        auto pool = &_mPools[typeHash];
         pool->add(component);
         // add the component to the entity with its index in the pool and its type hash
-        entityToComponents[entityUUID][typeHash] = pool->size() - 1;
-        componentToEntities[typeHash][pool->size() - 1] = entityUUID;
+        _mEntityToComponents[entityUUID][typeHash] = pool->size() - 1;
+        _mComponentToEntities[typeHash][pool->size() - 1] = entityUUID;
     }
 
     /**
@@ -128,7 +129,7 @@ public:
             auto pool = Pool<U>();
             auto typeHash = typeid(U).hash_code();
             // optimize: potential bottleneck => n cast operations
-            for (auto component : pools[typeHash]) {
+            for (auto component : _mPools[typeHash]) {
                 pool.add(std::any_cast<U>(component));
             }
             return pool;
@@ -148,10 +149,10 @@ public:
         if (!entityCheck(entityUUID)) return;
 
         auto typeHash = typeid(U).hash_code();
-        auto componentUUID = entityToComponents[entityUUID][typeHash];
-        pools[typeHash].remove(componentUUID);
-        entityToComponents[entityUUID].erase(typeHash);
-        componentToEntities[typeHash].erase(componentUUID);
+        auto componentUUID = _mEntityToComponents[entityUUID][typeHash];
+        _mPools[typeHash].remove(componentUUID);
+        _mEntityToComponents[entityUUID].erase(typeHash);
+        _mComponentToEntities[typeHash].erase(componentUUID);
     }
 
     /**
@@ -160,7 +161,7 @@ public:
      * @return the UUID of the entity
      */
     std::uint32_t createFromModel(const std::string& modelName) {
-        auto model = modelManager.getModel(modelName);
+        auto model = _mModelManager.getModel(modelName);
         this->create();
         // iterate through the constructor of the model
         for (auto& [componentName, constructor] : model.getComponentConstructors()) {
@@ -168,13 +169,13 @@ public:
             auto component = constructor();
             if (componentName == "Transform") {
                 auto tc = std::dynamic_pointer_cast<TransformComponent>(component);
-                this->assign<TransformComponent>(lastEntityUUID - 1, *tc);
+                this->assign<TransformComponent>(_mLastEntityUUID - 1, *tc);
             } else if (componentName == "Graphics") {
                 auto gc = std::dynamic_pointer_cast<GraphicsComponent>(component);
-                this->assign<GraphicsComponent>(lastEntityUUID - 1, *gc);
+                this->assign<GraphicsComponent>(_mLastEntityUUID - 1, *gc);
             }
         }
-        return lastEntityUUID - 1;
+        return _mLastEntityUUID - 1;
     }
 
 private:
@@ -185,16 +186,18 @@ private:
      * @return true if the entity exists and has not been destroyed, false otherwise
      */
     bool entityCheck(Entity entityUUID) {
-        if (entities.empty()) {
+        if (_mEntities.empty()) {
             std::cerr << "There is no entity" << std::endl;
             return false;
-        } else if (entityUUID > entityCount) {
+        } else if (entityUUID > _mEntityCount) {
             std::cerr << "Entity " << entityUUID << " does not exist" << std::endl;
             return false;
-        } else if (destroyedEntities.find(entityUUID) != destroyedEntities.end()) {
+        } else if (_mDestroyedEntities.find(entityUUID) != _mDestroyedEntities.end()) {
             std::cerr << "Entity " << entityUUID << " has already been destroyed" << std::endl;
             return false;
         }
         return true;
     }
 };
+
+#endif //__REGISTRY_H__

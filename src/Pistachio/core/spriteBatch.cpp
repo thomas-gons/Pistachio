@@ -5,28 +5,32 @@
 #include "spriteBatch.h"
 
 
-GLuint SpriteBatch::_globBindingIndex = 0;
+GLuint SpriteBatch::_msGlobBindingIndex = 0;
 
 SpriteBatch::SpriteBatch(uint32_t nSprites, GraphicsComponent &gc) {
-    if (nSprites > _maxNSprites)
-        nSprites = _maxNSprites;
 
-    quads.reserve(nSprites);
+    mTextureID = gc.mSprite->getTextureID();
+    GraphicsComponent::AnimationComponent *ac = gc.mAc;
 
+    if (nSprites > _mkMaxNSprites)
+        nSprites = _mkMaxNSprites;
+
+    mQuads = std::vector<QuadInfoNDC>(nSprites);
     // no animation => full texture to be displayed
-    tex_wh = (gc.ac == nullptr) ?
-            glm::vec2(1.0f, 1.0f) :
-            glm::vec2(1 / gc.ac->animation.sWidth, 1 / gc.ac->animation.sHeight);
+    mTexWH = (ac == nullptr) ?
+             glm::fvec2(1.0f, 1.0f) :
+             glm::fvec2(ac->mAnimation.mTexU, ac->mAnimation.mTexV);
 
-    _bindingIndex = SpriteBatch::_globBindingIndex++;
-    glGenBuffers(1, &_ssbo);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, _ssbo);
+    glGenVertexArrays(1, &_mVao);
+
+    _mBindingIndex = SpriteBatch::_msGlobBindingIndex++;
+    glGenBuffers(1, &_mSsbo);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, _mSsbo);
 
     // Allocate space for the SSBO on the GPU
     glBufferData(GL_SHADER_STORAGE_BUFFER, SSBO_SIZE(nSprites), nullptr, GL_DYNAMIC_DRAW);
-
     // Bind the SSBO to its binding index
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, _bindingIndex, _ssbo);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, _mBindingIndex, _mSsbo);
 }
 
 /**
@@ -34,13 +38,12 @@ SpriteBatch::SpriteBatch(uint32_t nSprites, GraphicsComponent &gc) {
  * by copying texture width and height and the quads data to the GPU
  */
 void SpriteBatch::updateSSBO() {
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, _ssbo);
-    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::vec2), &tex_wh);
-    glBufferSubData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::vec2), quads.size() * sizeof(QuadInfoNDC), quads.data());
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, _mSsbo);
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::fvec2), &mTexWH);
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::fvec2), mQuads.size() * sizeof(QuadInfoNDC), mQuads.data());
 }
 
 void SpriteBatch::draw() const {
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, _ssbo);
-    glDrawArrays(GL_POINTS, 0, VERTEX_SIZE * quads.size());
-
+    glBindVertexArray(_mVao);
+    glDrawArrays(GL_POINTS, 0, VERTEX_SIZE * mQuads.size());
 }

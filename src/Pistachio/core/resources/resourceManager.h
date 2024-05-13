@@ -2,7 +2,8 @@
 // Created by thomas on 22/01/24.
 //
 
-#pragma once
+#ifndef __RESOURCE_MANAGER_H__
+#define __RESOURCE_MANAGER_H__
 
 #include <unordered_map>
 #include <string>
@@ -12,10 +13,14 @@
 
 
 class ResourceManager {
-    std::unordered_map<std::string, Texture> textures;
-    std::unordered_map<std::string, Shader> shaders;
+
+private:
+    std::unordered_map<std::string, Texture> _mTextures;
+    std::unordered_map<std::string, Shader> mShaders;
 
 public:
+
+    ResourceManager() = default;
 
     void loadTexture(const char *name, const char *path);
     void loadShader(const char *name, const char *path);
@@ -27,3 +32,5 @@ public:
     Texture& getTexture(const char *name);
     Shader& getShader(const char *name);
 };
+
+#endif //__RESOURCE_MANAGER_H__

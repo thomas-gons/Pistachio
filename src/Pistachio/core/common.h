@@ -2,7 +2,8 @@
 // Created by thomas on 04/09/23.
 //
 
-#pragma once
+#ifndef __CORE_COMMON_H__
+#define __CORE_COMMON_H__
 
 #include <iostream>
 #include <cstdint>
@@ -23,3 +24,5 @@ template<typename T, typename...Args>
 T *createFromJson(const json& jsonObject, const Args&... remainingAttributes) {
     return new T(jsonObject[remainingAttributes]...);
 }
+
+#endif //__CORE_COMMON_H__

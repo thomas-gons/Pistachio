@@ -2,7 +2,8 @@
 // Created by thomas on 05/09/23.
 //
 
-#pragma once
+#ifndef __SYSTEM_H__
+#define __SYSTEM_H__
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -25,17 +26,17 @@ public:
 
 /************** RENDER SYSTEM **************/
 typedef struct {
-    std::vector<uint32_t> componentsIndexes;
+    std::vector<uint32_t> mComponentsIndexes;
     SpriteBatch spriteBatch;
 } SpriteBatchInfo;
 
 class RenderSystem : public System {
-    Pool<GraphicsComponent> &_gc;
-    Pool<TransformComponent> &_tc;
-    std::unordered_map<std::string, SpriteBatchInfo> _spriteBatchesInfo;
+    Pool<GraphicsComponent> &_mGcPool;
+    Pool<TransformComponent> &_mTcPool;
+    std::unordered_map<std::string, SpriteBatchInfo*> _mSpriteBatchesInfo;
 
 public:
-    RenderSystem(Pool<GraphicsComponent> &gc, Pool<TransformComponent> &tc);
+    RenderSystem(Pool<GraphicsComponent> &gcPool, Pool<TransformComponent> &tcPool);
     void addSpriteBatch(const std::string &tag);
     void update() override;
 };
@@ -44,18 +45,19 @@ public:
 /************** INPUT SYSTEM **************/
 class InputSystem : public System {
 public:
-    static std::array<bool, 348> _keys;
+    static std::array<bool, 348> _msKeys;
     static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
 };
 
 
 /************** MOVEMENT SYSTEM **************/
 class MovementSystem : public System {
-    Pool<TransformComponent> *_tc{};
+    Pool<TransformComponent> &_mTcPool;
 
 public:
-    MovementSystem() = default;
-    explicit MovementSystem(Pool<TransformComponent> &tc);
+    explicit MovementSystem(Pool<TransformComponent> &tc) : _mTcPool(tc) {}
 
     void update() override;
 };
+
+#endif //__SYSTEM_H__

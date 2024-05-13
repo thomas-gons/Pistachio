@@ -2,7 +2,8 @@
 // Created by thomas on 02/09/23.
 //
 
-#pragma once
+#ifndef __COMPONENT_H__
+#define __COMPONENT_H__
 
 #include <functional>
 
@@ -26,38 +27,55 @@ using TComponentConstructor = std::function<std::shared_ptr<Component>()>;
 // Concrete components
 
 struct GraphicsComponent : public Component {
-    const std::string tag;
-    glm::vec2 renderSize;
-    Sprite *sprite;
+    const std::string mkTag;
+    Sprite *mSprite;
 
     struct AnimationComponent {
-        Animation animation;
-        uint16_t currentFrame = 0;
-        uint8_t currentRow{AnimationRow::IDLE};
-        double lastFrameTime = 0;
+        Animation mAnimation;
+        uint16_t mCurrentFrame = 0;
+        uint8_t mCurrentRow{AnimationRow::WALK};
+        double mLastFrameTime = 0;
 
-        explicit AnimationComponent(Animation an) : animation(std::move(an)) {}
+        explicit AnimationComponent(Animation animation) : mAnimation(std::move(animation)) {}
+
+        friend std::ostream &operator<<(std::ostream &os, const AnimationComponent &p_ac) {
+            os << "AnimationComponent(" << p_ac.mAnimation
+               << "currentFrame: " << p_ac.mCurrentFrame
+               << ", currentRow: " << p_ac.mCurrentRow
+               << ")";
+
+            return os;
+        }
     };
 
-    AnimationComponent *ac;
+    AnimationComponent *mAc;
 
     GraphicsComponent(std::string tag, Sprite *sprite, Animation *an = nullptr);
-    GraphicsComponent(std::string tag, glm::vec2 renderSize, Sprite *sprite, Animation *an = nullptr);
 
     friend std::ostream& operator<<(std::ostream& os, const GraphicsComponent& gc) {
-        os << "GraphicsComponent(tag: " << gc.tag << ")";
+        os << "GraphicsComponent(tag: " << gc.mkTag
+              << ", sprite: " << gc.mSprite
+              << ", AnimationComponent: " << gc.mAc
+              << ")";
+
         return os;
     }
 };
 
 
 struct TransformComponent : public Component {
-    double x;
-    double y;
-    TransformComponent(double x, double y);
+    glm::dvec2 mPosition;
+    float mRotation;
+    float mScale;
+
+    TransformComponent(double x, double y) : mPosition(x, y), mRotation(0), mScale(1) {}
+    TransformComponent(double x, double y, float rotation, float scale) : mPosition(x, y), mRotation(rotation), mScale(scale) {}
 
     friend std::ostream& operator<<(std::ostream& os, const TransformComponent& tc) {
-        os << "TransformComponent(x: " << tc.x << ", y: " << tc.y << ")";
+        os << "TransformComponent(position: " << tc.mPosition.x << ", " << tc.mPosition.y
+              << ", rotation: " << tc.mRotation
+              << ", scale: " << tc.mScale
+              << ")";
         return os;
     }
 };
@@ -67,3 +85,5 @@ static std::unordered_map<std::uint64_t, std::string> componentNames = {
     {typeid(GraphicsComponent).hash_code(), "GraphicsComponent"},
     {typeid(TransformComponent).hash_code(), "TransformComponent"},
 };
+
+#endif //__COMPONENT_H__

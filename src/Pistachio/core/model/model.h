@@ -1,8 +1,8 @@
 //
 // Created by thomas on 17/11/23.
 //
-
-#pragma once
+#ifndef __MODEL_H__
+#define __MODEL_H__
 
 #include <fstream>
 #include <utility>
@@ -13,12 +13,14 @@
 extern ResourceManager resourceManager;
 
 class Model {
-    std::string tag;
-    std::unordered_map<std::string, TComponentConstructor> componentConstructors;
+
+private:
+    std::string _mTag;
+    std::unordered_map<std::string, TComponentConstructor> _mComponentConstructors;
 
     void selectComponent(const std::string& componentTag, nlohmann::json args) {
         if (componentTag == "TransformComponent") {
-            componentConstructors["Transform"] = defineConstructor<TransformComponent>(
+            _mComponentConstructors["Transform"] = defineConstructor<TransformComponent>(
                     args["x"], args["y"]
             );
         } else if (componentTag == "GraphicsComponent") {
@@ -27,10 +29,10 @@ class Model {
             Animation *animation = nullptr;
             if (args.contains("AnimationComponent")) {
                 animation = createFromJson<Animation>(
-                        args["AnimationComponent"], "frameDuration", "rowsCount", "frameCountPerRow"
+                        args["AnimationComponent"], "mFrameDuration", "mRowsCount", "mFrameCountPerRow"
                 );
             }
-             componentConstructors["Graphics"] = defineConstructor<GraphicsComponent>(
+            _mComponentConstructors["Graphics"] = defineConstructor<GraphicsComponent>(
                      componentTag, sprite, animation
              );
         } else {
@@ -50,7 +52,7 @@ class Model {
 
 public:
 
-    Model(const std::string& modelPath, std::string modelTag ) : tag(std::move(modelTag)) {
+    Model(const std::string& modelPath, std::string modelTag) : _mTag(std::move(modelTag)) {
         std::ifstream file(modelPath);
         if (!file.is_open()) {
             throw std::runtime_error("Could not open model file: " + modelPath);
@@ -61,9 +63,9 @@ public:
             selectComponent(componentName, args);
     }
 
-    Model() = default;
-
     std::unordered_map<std::string, TComponentConstructor> getComponentConstructors() {
-        return componentConstructors;
+        return _mComponentConstructors;
     }
 };
+
+#endif //__MODEL_H__

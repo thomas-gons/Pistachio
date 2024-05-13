@@ -1,8 +1,8 @@
 //
 // Created by thomas on 21/09/23.
 //
-
-#pragma once
+#ifndef __POOL_H__
+#define __POOL_H__
 
 #include "common.h"
 
@@ -24,36 +24,36 @@ using Block = std::vector<T>;
 template <typename T>
 class Pool {
     /// The size of a block
-    static const std::uint32_t k_blockSize = 1000;
+    static const std::uint32_t _mkBlockSize = 1000;
 
     /// The blocks of the pool
-    std::vector<std::shared_ptr<Block<T>>> _blocks = {};
+    std::vector<std::shared_ptr<Block<T>>> _mBlocks = {};
 
     /// the total number of elements in the pool
-    std::uint32_t _size = 0;
+    std::uint32_t _mSize = 0;
 
     /**
      * An iterator over the elements of the pool that allows us to use range-based for loops.
      */
     class Iterator {
         // NOTE: this iterator uses a reference to the class it is iterating over...
-        Pool<T> *_pool;
-        std::uint32_t _index;
+        Pool<T> *_mPool;
+        std::uint32_t _mIndex;
 
     public:
-        Iterator(Pool<T> *pool, std::uint32_t index) : _pool(pool), _index(index) {};
+        Iterator(Pool<T> *pool, std::uint32_t index) : _mPool(pool), _mIndex(index) {};
 
         T &operator*() const {
-            return _pool->at(_index);
+            return _mPool->at(_mIndex);
         }
 
         Iterator& operator++() {
-            ++_index;
+            ++_mIndex;
             return *this;
         }
 
         bool operator!=(const Iterator& other) const {
-            return _index != other._index;
+            return _mIndex != other._mIndex;
         }
     };
 
@@ -65,10 +65,10 @@ public:
      * @return the element at the given index
      */
     T &operator[](std::uint32_t uuid) {
-        if (uuid >= _size) {
+        if (uuid >= _mSize) {
             throw std::out_of_range("Index out of range");
         }
-        return _blocks[uuid / k_blockSize]->at(uuid % k_blockSize);
+        return _mBlocks[uuid / _mkBlockSize]->at(uuid % _mkBlockSize);
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Pool<T>& pool) {
@@ -82,7 +82,7 @@ public:
         return Iterator(const_cast<Pool<T>*>(this), 0);
     }
     Iterator end() const {
-        return Iterator(const_cast<Pool<T>*>(this), _size);
+        return Iterator(const_cast<Pool<T>*>(this), _mSize);
     }
 
     /**
@@ -92,12 +92,12 @@ public:
      */
     void add(T e) {
         // allocate a new block if the last one is full
-        if (_size % k_blockSize == 0) {
-            _blocks.push_back(Pool<T>::allocateBlock());
+        if (_mSize % _mkBlockSize == 0) {
+            _mBlocks.push_back(Pool<T>::allocateBlock());
         }
-        auto lastBlock = _blocks.back();
+        auto lastBlock = _mBlocks.back();
         lastBlock->push_back(e);
-        _size++;
+        _mSize++;
     }
 
     /**
@@ -108,31 +108,31 @@ public:
      */
     unsigned remove(uint32_t uuid) {
         // remove the element inside the block and replace it with the last one
-        auto block = _blocks[uuid / k_blockSize];
-        auto lastBlock = _blocks.back();
-        block->at(uuid % k_blockSize) = lastBlock->back();
+        auto block = _mBlocks[uuid / _mkBlockSize];
+        auto lastBlock = _mBlocks.back();
+        block->at(uuid % _mkBlockSize) = lastBlock->back();
         // remove the last element
         lastBlock->pop_back();
-        _size--;
-        // if the block is empty, free it and remove it from the _blocks vector
+        _mSize--;
+        // if the block is empty, free it and remove it from the _mBlocks vector
         if (lastBlock->empty()) {
             Pool<T>::freeBlock(block);
-            _blocks.pop_back();
+            _mBlocks.pop_back();
         }
-        return _size + 1;
+        return _mSize + 1;
     }
     /**
      * Access an element of the pool by its index like in a regular array (like operator[]).
      */
     T &at(std::uint32_t uuid) {
-        return _blocks[uuid / k_blockSize]->at(uuid % k_blockSize);
+        return _mBlocks[uuid / _mkBlockSize]->at(uuid % _mkBlockSize);
     }
 
     /**
      * @return true if the pool is empty and false otherwise
      */
     bool empty() {
-        return _blocks.empty() && _blocks.front()->empty();
+        return _mBlocks.empty() && _mBlocks.front()->empty();
     }
 
     /**
@@ -140,17 +140,17 @@ public:
      * @return the number of elements in the pool
      */
     std::size_t size() {
-        return _size;
+        return _mSize;
     }
 
 private:
     /**
-     * @brief Allocate a new empty block in memory and reserve @c k_blockSize elements.
+     * @brief Allocate a new empty block in memory and reserve @c kBlockSize elements.
      * @return a pointer to the newly allocated block
      */
     static std::shared_ptr<Block<T>> allocateBlock() {
         auto block = std::make_shared<Block<T>>();
-        block->reserve(k_blockSize);
+        block->reserve(_mkBlockSize);
         return block;
     }
 
@@ -162,3 +162,5 @@ private:
         block->clear();
     }
 };
+
+#endif //__POOL_H__

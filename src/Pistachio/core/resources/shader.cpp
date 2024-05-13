@@ -47,8 +47,8 @@ std::unordered_map<GLenum, std::string> Shader::loadShader (const char *path) {
 }
 
 void Shader::compileShader(std::unordered_map<GLenum, std::string> &shaderSources) {
-    shaderProgram = glCreateProgram();
-    if (shaderProgram == 0) {
+    mShaderProgram = glCreateProgram();
+    if (mShaderProgram == 0) {
         std::cout << "Shader program creation failed!" << std::endl;
         exit(-1);
     }
@@ -65,23 +65,23 @@ void Shader::compileShader(std::unordered_map<GLenum, std::string> &shaderSource
             std::cout << "Shader compilation failed: " << infoLog << std::endl;
             exit(-1);
         }
-        glAttachShader(shaderProgram, shader);
+        glAttachShader(mShaderProgram, shader);
         glDeleteShader(shader);
     }
 
-    glLinkProgram(shaderProgram);
+    glLinkProgram(mShaderProgram);
     GLint success;
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    glGetProgramiv(mShaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
         GLchar infoLog[512];
-        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+        glGetProgramInfoLog(mShaderProgram, 512, nullptr, infoLog);
         std::cout << "Shader linking failed: " << infoLog << std::endl;
         exit(-1);
     }
 }
 
 void Shader::use() const {
-    glUseProgram(shaderProgram);
+    glUseProgram(mShaderProgram);
 }
 
 template <>

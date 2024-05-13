@@ -2,7 +2,8 @@
 // Created by thomas on 04/09/23.
 //
 
-#pragma once
+#ifndef __SPRITE_H__
+#define __SPRITE_H__
 
 #include "core/common.h"
 #include "core/resources/texture.h"
@@ -41,39 +42,52 @@ enum AnimationRow {
 struct Animation {
 
     /// The duration of each frame in milliseconds (same for all animations)
-    uint16_t frameDuration;
+    uint16_t mFrameDuration;
 
     /// The number of frames in each animation row
-    std::vector<uint8_t> frameCountPerRow;
+    std::vector<uint8_t> mFrameCountPerRow;
 
     /// The number of animations in the sprite sheet
-    uint8_t rowsCount;
+    uint8_t mRowsCount;
 
-    uint16_t sWidth;
-    uint16_t sHeight;
+    uint32_t mFrameW;
+    uint32_t mFrameH;
 
     /// The texture coordinates of the sprite
-    float tex_u;
-    float tex_v;
-
+    float mTexU;
+    float mTexV;
 
     /**
      * @brief Construct an animation that will be referenced by a @c GraphicsComponent
      */
     Animation(uint16_t frameDuration, std::vector<uint8_t> frameCountPerRow, uint8_t rowsCount) :
-        frameDuration(frameDuration),
-        frameCountPerRow(std::move(frameCountPerRow)),
-        rowsCount(rowsCount) {
+            mFrameDuration(frameDuration / 60),
+            mFrameCountPerRow(std::move(frameCountPerRow)),
+            mRowsCount(rowsCount) {
 
         uint8_t maxFrames = 0;
-        for (auto &frameCount : frameCountPerRow) {
+        for (auto &frameCount : mFrameCountPerRow) {
             if (frameCount > maxFrames)
                 maxFrames = frameCount;
         }
-        tex_u = 1 / (float) maxFrames;
-        tex_v = 1 / (float) rowsCount;
+        mTexU = 1 / (float) maxFrames;
+        mTexV = 1 / (float) rowsCount;
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Animation &an) {
+        os << "Animation(mFrameDuration: " << an.mFrameDuration;
+        os << ", mFrameCountPerRow: [";
+        for (auto &frameCount : an.mFrameCountPerRow) {
+            os << ", frameCount: " << frameCount;
+        }
+        os << ", mRowsCount: " << an.mRowsCount
+           << ", mWidth: " << an.mFrameW
+              << ", mHeight: " << an.mFrameH
+           << ")";
+
+        return os;
     }
 
 };
 
-
+#endif //__SPRITE_H__
