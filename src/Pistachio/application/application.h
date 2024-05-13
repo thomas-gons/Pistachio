@@ -7,6 +7,11 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#include "imgui_internal.h"
+
 #include "core/ecs/registry.h"
 #include "core/resources/resourceManager.h"
 #include "core/ecs/systemManager.h"

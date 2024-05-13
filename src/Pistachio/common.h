@@ -5,8 +5,8 @@
 #ifndef __PISTACHIO_COMMON_H__
 #define __PISTACHIO_COMMON_H__
 
-#define WIDTH 800
-#define HEIGHT 600
+#define WIDTH 1280
+#define HEIGHT 720
 
 
 #endif //__PISTACHIO_COMMON_H__

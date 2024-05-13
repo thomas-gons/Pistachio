@@ -29,6 +29,17 @@ Application::Application() {
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(debugCallback, nullptr);
 
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(_mWindow, true);
+    ImGui_ImplOpenGL3_Init("#version 460");
+
     mRegistry.create();
     mResourceManager = ResourceManager();
     mResourceManager.loadTexture("flame", "resources/assets/flame.png");
@@ -57,15 +68,46 @@ Application::Application() {
 void Application::run() {
     int i = 0;
     while (!glfwWindowShouldClose(_mWindow)) {
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-//        mSystemManager.update<MovementSystem>();
-        mSystemManager.update<RenderSystem>();
-        glfwSwapBuffers(_mWindow);
         glfwPollEvents();
-        if (++i == 10) {
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        static bool firstLoop = true;
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+
+        if (ImGui::Begin("Pistachio Editor", nullptr, window_flags)) {
+            if (firstLoop) {
+
+                ImGuiID id = ImGui::GetID("Pistachio Editor DockSpace");
+
+
+                ImGui::DockBuilderRemoveNode(id);
+                ImGui::DockBuilderAddNode(id);
+
+                ImGuiID terminal = ImGui::DockBuilderSplitNode(id, ImGuiDir_Down, 0.3f, nullptr, &id);
+                ImGui::DockBuilderDockWindow("Terminal", terminal);
+                ImGuiID scene = ImGui::DockBuilderSplitNode(id, ImGuiDir_Left, 0.7f, nullptr, &id);
+                ImGuiID editor = ImGui::DockBuilderSplitNode(id, ImGuiDir_Right, 0.3f, nullptr, &id);
+                ImGui::DockBuilderDockWindow("Scene", scene);
+                ImGui::DockBuilderDockWindow("Editor", editor);
+                ImGui::DockBuilderFinish(id);
+                firstLoop = false;
+            }
+            ImGui::DockSpace(ImGui::GetID("Pistachio Editor DockSpace"), ImVec2(0, 0));
+            ImGui::Begin("Scene"); ImGui::End();
+            ImGui::Begin("Editor"); ImGui::End();
+            ImGui::Begin("Terminal"); ImGui::End();
         }
+        ImGui::SetWindowPos(ImVec2(0, 0));
+        ImGui::End();
+
+        // Rendering
+        ImGui::Render();
+        glClear(GL_COLOR_BUFFER_BIT);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glfwSwapBuffers(_mWindow);
     }
 }
 
