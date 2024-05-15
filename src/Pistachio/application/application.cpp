@@ -5,6 +5,26 @@
 
 
 Application::Application() {
+    if (pipe(_mPipe) == -1) {
+        std::cerr << "Failed to create pipe" << std::endl;
+        exit(-1);
+    }
+
+    int flags = fcntl(_mPipe[0], F_GETFL, 0);
+    if (flags == -1) {
+        std::cerr << "Failed to get flags" << std::endl;
+        exit(-1);
+    }
+
+    if (fcntl(_mPipe[0], F_SETFL, flags | O_NONBLOCK) == -1) {
+        std::cerr << "Failed to set flags" << std::endl;
+        exit(-1);
+    }
+
+    dup2(_mPipe[1], STDOUT_FILENO);
+    close(_mPipe[1]);
+    fflush(stdout);
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -25,7 +45,6 @@ Application::Application() {
         std::cout << "Failed to initialize GLEW" << std::endl;
         exit(-1);
     }
-
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(debugCallback, nullptr);
 
@@ -75,30 +94,33 @@ void Application::run() {
         ImGui::NewFrame();
 
         static bool firstLoop = true;
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove;
 
         if (ImGui::Begin("Pistachio Editor", nullptr, window_flags)) {
             if (firstLoop) {
-
                 ImGuiID id = ImGui::GetID("Pistachio Editor DockSpace");
 
-
-                ImGui::DockBuilderRemoveNode(id);
                 ImGui::DockBuilderAddNode(id);
-
-                ImGuiID terminal = ImGui::DockBuilderSplitNode(id, ImGuiDir_Down, 0.3f, nullptr, &id);
-                ImGui::DockBuilderDockWindow("Terminal", terminal);
-                ImGuiID scene = ImGui::DockBuilderSplitNode(id, ImGuiDir_Left, 0.7f, nullptr, &id);
                 ImGuiID editor = ImGui::DockBuilderSplitNode(id, ImGuiDir_Right, 0.3f, nullptr, &id);
+                ImGuiID terminal = ImGui::DockBuilderSplitNode(id, ImGuiDir_Down, 0.3f, nullptr, &id);
+                ImGuiID scene = ImGui::DockBuilderSplitNode(id, ImGuiDir_Left, 0.7f, nullptr, &id);
                 ImGui::DockBuilderDockWindow("Scene", scene);
+                ImGui::DockBuilderDockWindow("Terminal", terminal);
                 ImGui::DockBuilderDockWindow("Editor", editor);
+                ImGui::DockBuilderFinish(id);
+
+                ImGui::DockBuilderAddNode(id);
+                ImGuiID components = ImGui::DockBuilderSplitNode(editor, ImGuiDir_Down, 0.5f, nullptr, &id);
+                ImGui::DockBuilderDockWindow("Component Editor", components);
                 ImGui::DockBuilderFinish(id);
                 firstLoop = false;
             }
             ImGui::DockSpace(ImGui::GetID("Pistachio Editor DockSpace"), ImVec2(0, 0));
-            ImGui::Begin("Scene"); ImGui::End();
-            ImGui::Begin("Editor"); ImGui::End();
-            ImGui::Begin("Terminal"); ImGui::End();
+
+            setScene();
+            setEditor();
+            setTerminal();
+            setComponentEditor();
         }
         ImGui::SetWindowPos(ImVec2(0, 0));
         ImGui::End();
@@ -109,8 +131,42 @@ void Application::run() {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(_mWindow);
     }
+    cleanUp();
+}
+
+void Application::setScene() {
+    ImGui::Begin("Scene"); ImGui::End();
+}
+
+void Application::setEditor() {
+    ImGui::Begin("Editor");
+    ImGui::SetNextItemOpen(true);
+    if (ImGui::TreeNode("General")) {
+        ImGui::Text("Hello World");
+        ImGui::TreePop();
+        ImGui::Image((void*)(intptr_t)mResourceManager.getTexture("flame").getTextureID(), ImVec2(100, 100));
+    }
+    ImGui::End();
+}
+
+void Application::setComponentEditor() {
+    ImGui::Begin("Component Editor");
+    ImGui::End();
+}
+
+void Application::setTerminal() {
+    static char *buffer = new char[BUFFER_LOG_SIZE];
+    if (read(_mPipe[0], buffer, BUFFER_LOG_SIZE) != -1)
+        _mBuffer.append(buffer);
+    ImGui::Begin("Terminal");
+    ImGui::TextUnformatted(_mBuffer.begin(), _mBuffer.end());
+    ImGui::SetScrollHereY(1.0f);
+    ImGui::End();
 }
 
 void Application::cleanUp() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     glfwTerminate();
 }

@@ -7,6 +7,11 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -17,6 +22,7 @@
 #include "core/ecs/systemManager.h"
 #include "core/ecs/component.h"
 
+#define BUFFER_LOG_SIZE 4096
 
 class Application {
 
@@ -25,6 +31,10 @@ private:
     GLint _mWidth = WIDTH;
     GLint _mHeight = HEIGHT;
 
+    // use pipe to redirect stdout to terminal
+    int _mPipe[2];
+    ImGuiTextBuffer _mBuffer;
+
     static void GLAPIENTRY debugCallback (
             GLenum source, GLenum type, GLuint id, GLenum severity,
             GLsizei length, const GLchar* message, const void* userParam)
@@ -32,6 +42,12 @@ private:
         std::cout << "GL CALLBACK: " << (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "") << " type = "
                   << type << ", severity = " << severity << ", message = " << message << std::endl;
     }
+
+    void setEditor();
+    void setComponentEditor();
+    void setTerminal();
+    void setScene();
+
 
 public:
 
@@ -43,7 +59,7 @@ public:
 
     Application();
     void run();
-    void cleanUp();
+    static void cleanUp();
 };
 
 #endif //__APPLICATION_H__
