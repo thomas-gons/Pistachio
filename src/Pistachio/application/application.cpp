@@ -65,7 +65,7 @@ Application::Application() {
     mResourceManager.loadShader("sprite", "resources/shaders/test_shader.glsl");
     mResourceManager.getShader("sprite").use();
     Sprite &sprite = mResourceManager.getTexture("flame");
-    Animation animation = Animation(12, {8, 8}, 2);
+    Animation animation = Animation(12, {8, 8});
     TransformComponent tc = TransformComponent(300, 300);
     GraphicsComponent gc = GraphicsComponent("flame", &sprite, &animation);
     mRegistry.assign<GraphicsComponent>(0, gc);
@@ -82,11 +82,14 @@ Application::Application() {
     mSystemManager.addSystem<MovementSystem>(mTcPool);
 
     glfwSetKeyCallback(_mWindow, InputSystem::keyCallback);
+
+    _mModelManager.loadAllModels();
 }
 
 void Application::run() {
     int i = 0;
     while (!glfwWindowShouldClose(_mWindow)) {
+
         glfwPollEvents();
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -142,15 +145,50 @@ void Application::setEditor() {
     ImGui::Begin("Editor");
     ImGui::SetNextItemOpen(true);
     if (ImGui::TreeNode("General")) {
-        ImGui::Text("Hello World");
+        if (ImGui::TreeNode("Textures")) {
+            for (auto &textureTag : mResourceManager.getTextureTags()) {
+                if (ImGui::Button(textureTag.c_str())) {
+                    mResourceManager.getTexture(textureTag.c_str());
+                }
+            }
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Shaders")) {
+            for (auto &shaderTag : mResourceManager.getShaderTags()) {
+                if (ImGui::Button(shaderTag.c_str())) {
+                    mResourceManager.getShader(shaderTag.c_str());
+                }
+            }
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Models")) {
+            for (auto &modelTag : _mModelManager.getModelTags()) {
+                if (ImGui::Button(modelTag.c_str())) {
+                    _mCurrentModel = modelTag;
+                }
+            }
+            ImGui::TreePop();
+        }
         ImGui::TreePop();
-        ImGui::Image((void*)(intptr_t)mResourceManager.getTexture("flame").getTextureID(), ImVec2(100, 100));
+//        ImGui::Image((void*)(intptr_t)mResourceManager.getTexture("flame").getTextureID(), ImVec2(100, 100));
     }
     ImGui::End();
 }
 
 void Application::setComponentEditor() {
     ImGui::Begin("Component Editor");
+    if (!_mCurrentModel.empty()) {
+        auto model = _mModelManager.getModel(_mCurrentModel);
+        for (auto &componentTag: model.getComponentTags())
+                // create a sub window for each component
+                if (ImGui::CollapsingHeader(componentTag.c_str())) {
+                    ImGui::Text("Component: %s", componentTag.c_str());
+                }
+    } else {
+        ImGui::Text("No model selected");
+    }
     ImGui::End();
 }
 
@@ -160,7 +198,9 @@ void Application::setTerminal() {
         _mBuffer.append(buffer);
     ImGui::Begin("Terminal");
     ImGui::TextUnformatted(_mBuffer.begin(), _mBuffer.end());
-    ImGui::SetScrollHereY(1.0f);
+    if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+        ImGui::SetScrollHereY(1.0f);
+
     ImGui::End();
 }
 
@@ -169,4 +209,17 @@ void Application::cleanUp() {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     glfwTerminate();
+}
+
+
+void Application::typeMappingToImGuiNode(const std::string &type) {
+    if (type == "int") {
+        ImGui::InputInt("##int", nullptr);
+    } else if (type == "float") {
+        ImGui::InputFloat("##float", nullptr);
+    } else if (type == "bool") {
+        ImGui::Checkbox("##bool", nullptr);
+    } else if (type == "string") {
+        ImGui::InputText("##string", nullptr, 0);
+    }
 }

@@ -35,6 +35,8 @@ private:
     int _mPipe[2];
     ImGuiTextBuffer _mBuffer;
 
+    std::string _mCurrentModel;
+
     static void GLAPIENTRY debugCallback (
             GLenum source, GLenum type, GLuint id, GLenum severity,
             GLsizei length, const GLchar* message, const void* userParam)
@@ -54,12 +56,15 @@ public:
     Registry mRegistry;
     SystemManager mSystemManager;
     ResourceManager mResourceManager;
+    ModelManager _mModelManager = ModelManager();
     Pool<GraphicsComponent> mGcPool;
     Pool<TransformComponent> mTcPool;
 
     Application();
     void run();
     static void cleanUp();
+
+    static void typeMappingToImGuiNode(const std::string &type);
 };
 
 #endif //__APPLICATION_H__

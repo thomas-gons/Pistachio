@@ -16,20 +16,23 @@ class Model {
 
 private:
     std::string _mTag;
+    std::vector<std::string> _mComponentTags;
     std::unordered_map<std::string, TComponentConstructor> _mComponentConstructors;
 
     void selectComponent(const std::string& componentTag, nlohmann::json args) {
         if (componentTag == "TransformComponent") {
+            _mComponentTags.emplace_back("Transform");
             _mComponentConstructors["Transform"] = defineConstructor<TransformComponent>(
                     args["x"], args["y"]
             );
         } else if (componentTag == "GraphicsComponent") {
+            _mComponentTags.emplace_back("Graphics");
             // TODO: handle sprite and animation model
             Sprite *sprite = nullptr;
             Animation *animation = nullptr;
             if (args.contains("AnimationComponent")) {
                 animation = createFromJson<Animation>(
-                        args["AnimationComponent"], "mFrameDuration", "mRowsCount", "mFrameCountPerRow"
+                        args["AnimationComponent"], "frameDuration", "frameCountPerRow"
                 );
             }
             _mComponentConstructors["Graphics"] = defineConstructor<GraphicsComponent>(
@@ -63,9 +66,14 @@ public:
             selectComponent(componentName, args);
     }
 
+    std::vector<std::string> getComponentTags() {
+        return _mComponentTags;
+    }
+
     std::unordered_map<std::string, TComponentConstructor> getComponentConstructors() {
         return _mComponentConstructors;
     }
+
 };
 
 #endif //__MODEL_H__

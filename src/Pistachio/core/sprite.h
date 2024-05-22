@@ -60,18 +60,18 @@ struct Animation {
     /**
      * @brief Construct an animation that will be referenced by a @c GraphicsComponent
      */
-    Animation(uint16_t frameDuration, std::vector<uint8_t> frameCountPerRow, uint8_t rowsCount) :
+    Animation(uint16_t frameDuration, std::vector<uint8_t> frameCountPerRow) :
             mFrameDuration(frameDuration / 60),
-            mFrameCountPerRow(std::move(frameCountPerRow)),
-            mRowsCount(rowsCount) {
+            mFrameCountPerRow(std::move(frameCountPerRow)) {
 
+        mRowsCount = mFrameCountPerRow.size();
         uint8_t maxFrames = 0;
         for (auto &frameCount : mFrameCountPerRow) {
             if (frameCount > maxFrames)
                 maxFrames = frameCount;
         }
         mTexU = 1 / (float) maxFrames;
-        mTexV = 1 / (float) rowsCount;
+        mTexV = 1 / (float) mRowsCount;
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Animation &an) {

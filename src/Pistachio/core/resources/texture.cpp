@@ -7,7 +7,7 @@
 
 bool Texture::loadTexture(const char* filename)
 {
-    stbi_set_flip_vertically_on_load(true);
+//    stbi_set_flip_vertically_on_load(true);
     int nrChannels;
     unsigned char *data = stbi_load(filename, &this->width, &this->height, &nrChannels, 0);
     if (data == nullptr) {

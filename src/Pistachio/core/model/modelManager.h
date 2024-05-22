@@ -10,10 +10,10 @@
 
 
 class ModelManager {
+    std::vector<std::string> _mModelTags;
     std::unordered_map<std::string, Model*> _mModels;
 
 public:
-
     void loadAllModels() {
         // iterate over all json files in resources/config
         for (const auto& entry : std::filesystem::directory_iterator("resources/config")) {
@@ -23,6 +23,7 @@ public:
             }
             // take the base name of the file without the extension
             std::string modelName = entry.path().stem();
+            _mModelTags.push_back(modelName);
             loadModel(modelName);
         }
     }
@@ -35,6 +36,11 @@ public:
     Model getModel(const std::string& modelTag) {
         return *_mModels[modelTag];
     }
+
+    std::vector<std::string> getModelTags() {
+        return _mModelTags;
+    }
+
 };
 
 #endif //__MODEL_MANAGER_H__

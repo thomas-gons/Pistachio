@@ -7,6 +7,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 #include "texture.h"
 #include "shader.h"
@@ -20,6 +21,9 @@ private:
 
 public:
 
+    std::vector<std::string> mTextureTags;
+    std::vector<std::string> mShaderTags;
+
     ResourceManager() = default;
 
     void loadTexture(const char *name, const char *path);
@@ -31,6 +35,9 @@ public:
 
     Texture& getTexture(const char *name);
     Shader& getShader(const char *name);
+
+    std::vector<std::string> getTextureTags();
+    std::vector<std::string> getShaderTags();
 };
 
 #endif //__RESOURCE_MANAGER_H__
